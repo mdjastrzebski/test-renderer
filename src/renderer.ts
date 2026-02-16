@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import { ConcurrentRoot } from "react-reconciler/constants";
 
 import { Tag } from "./constants";
-import { HostElement } from "./host-element";
+import { HostInstance } from "./host-element";
 import { measureEnd, measureStart } from "./performance";
 import type { Container } from "./reconciler";
 import { TestReconciler } from "./reconciler";
@@ -73,7 +73,7 @@ export type Root = {
   /** Unmount the root and clean up. Must be called within act(). */
   unmount: () => void;
   /** The root container element. */
-  container: HostElement;
+  container: HostInstance;
 };
 
 /**
@@ -151,12 +151,12 @@ export function createRoot(options?: RootOptions): Root {
   return {
     render,
     unmount,
-    get container(): HostElement {
+    get container(): HostInstance {
       if (container == null) {
         throw new Error("Cannot access .container on unmounted test renderer");
       }
 
-      return HostElement.fromInstance(container);
+      return HostInstance.fromInstance(container);
     },
   };
 }

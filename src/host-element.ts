@@ -7,20 +7,20 @@ import type { Container, Instance, TextInstance } from "./reconciler";
 import type { JsonElement } from "./render-to-json";
 import { renderContainerToJson, renderInstanceToJson } from "./render-to-json";
 
-/** A node in the rendered tree - either a HostElement or a text string. */
-export type HostNode = HostElement | string;
+/** A node in the rendered tree - either a HostInstance or a text string. */
+export type HostNode = HostInstance | string;
 
 /** Props object for a host element. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type HostElementProps = Record<string, any>;
+export type HostInstanceProps = Record<string, any>;
 
-const instanceMap = new WeakMap<Instance | Container, HostElement>();
+const instanceMap = new WeakMap<Instance | Container, HostInstance>();
 
 /**
  * Represents a rendered host element in the test renderer tree.
  * Provides a DOM-like API for querying and inspecting rendered components.
  */
-export class HostElement {
+export class HostInstance {
   private instance: Instance | Container;
 
   private constructor(instance: Instance | Container) {
@@ -33,18 +33,18 @@ export class HostElement {
   }
 
   /** The element's props object. */
-  get props(): HostElementProps {
+  get props(): HostInstanceProps {
     return this.instance.tag === Tag.Instance ? this.instance.props : {};
   }
 
   /** The parent element, or null if this is the root container. */
-  get parent(): HostElement | null {
+  get parent(): HostInstance | null {
     const parentInstance = this.instance.parent;
     if (parentInstance == null) {
       return null;
     }
 
-    return HostElement.fromInstance(parentInstance);
+    return HostInstance.fromInstance(parentInstance);
   }
 
   /** Array of child nodes (elements and text strings). Hidden children are excluded. */
@@ -84,18 +84,18 @@ export class HostElement {
    * @param options - Optional query configuration.
    * @returns Array of matching elements.
    */
-  queryAll(predicate: (element: HostElement) => boolean, options?: QueryOptions): HostElement[] {
+  queryAll(predicate: (element: HostInstance) => boolean, options?: QueryOptions): HostInstance[] {
     return queryAll(this, predicate, options);
   }
 
   /** @internal */
-  static fromInstance(instance: Instance | Container): HostElement {
+  static fromInstance(instance: Instance | Container): HostInstance {
     const hostElement = instanceMap.get(instance);
     if (hostElement) {
       return hostElement;
     }
 
-    const result = new HostElement(instance);
+    const result = new HostInstance(instance);
     instanceMap.set(instance, result);
     return result;
   }
@@ -107,6 +107,6 @@ function getHostNodeForInstance(instance: Instance | TextInstance): HostNode {
       return instance.text;
 
     case Tag.Instance:
-      return HostElement.fromInstance(instance);
+      return HostInstance.fromInstance(instance);
   }
 }

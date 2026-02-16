@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { act as reactAct } from "react";
 
-import type { HostElement } from "../host-element";
+import type { HostInstance } from "../host-element";
 import { mark } from "../performance";
 import type { Root } from "../renderer";
 
@@ -33,7 +33,7 @@ export async function unmountWithAct(root: Root) {
 }
 
 /** @internal */
-export function getRootElement(renderer: Root): HostElement {
+export function getRootElement(renderer: Root): HostInstance {
   const firstChild = renderer.container.children[0];
   if (typeof firstChild === "string") {
     throw new Error(`Root element should not be text (got "${firstChild}")`);

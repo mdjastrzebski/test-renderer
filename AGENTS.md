@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Test Renderer for React** is a lightweight, pure JavaScript testing library for React 19. It replaces the deprecated `react-test-renderer`. Built with `react-reconciler`, it outputs to a lightweight, traversable object structure (`HostElement`) for snapshot testing and asserting component output without a browser environment (DOM) or native dependencies.
+**Test Renderer for React** is a lightweight, pure JavaScript testing library for React 19. It replaces the deprecated `react-test-renderer`. Built with `react-reconciler`, it outputs to a lightweight, traversable object structure (`HostInstance`) for snapshot testing and asserting component output without a browser environment (DOM) or native dependencies.
 
 ### Key Features
 
@@ -16,8 +16,8 @@
 - **`src/index.ts`**: The public entry point that exports `createRoot` from `renderer.ts`.
 - **`src/renderer.ts`**: Contains the main implementation. Exports `createRoot` which initializes the custom React reconciler.
 - **`src/reconciler.ts`**: Implements the `react-reconciler` host config, translating React updates into operations on the internal tree.
-- **`src/host-element.ts`**: Defines `HostElement`, a wrapper around the internal fiber nodes with a DOM-like API (e.g., `children`, `props`, `parent`).
-- **`src/render-to-json.ts`**: Handles the serialization of `HostElement` trees into JSON format for snapshots.
+- **`src/host-element.ts`**: Defines `HostInstance`, a wrapper around the internal fiber nodes with a DOM-like API (e.g., `children`, `props`, `parent`).
+- **`src/render-to-json.ts`**: Handles the serialization of `HostInstance` trees into JSON format for snapshots.
 
 ## Building and Running
 

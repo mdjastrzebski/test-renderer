@@ -1,4 +1,4 @@
-import type { HostElement } from "./host-element";
+import type { HostInstance } from "./host-element";
 
 /**
  * Options for querying elements in the rendered tree.
@@ -20,17 +20,17 @@ export interface QueryOptions {
  * @returns Array of matching elements in tree order.
  */
 export function queryAll(
-  element: HostElement,
-  predicate: (element: HostElement) => boolean,
+  element: HostInstance,
+  predicate: (element: HostInstance) => boolean,
   options?: QueryOptions,
-): HostElement[] {
+): HostInstance[] {
   const includeSelf = options?.includeSelf ?? false;
   const matchDeepestOnly = options?.matchDeepestOnly ?? false;
 
-  const results: HostElement[] = [];
+  const results: HostInstance[] = [];
 
   // Match descendants first but do not add them to results yet.
-  const matchingDescendants: HostElement[] = [];
+  const matchingDescendants: HostInstance[] = [];
 
   element.children.forEach((child) => {
     if (typeof child === "string") {

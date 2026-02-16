@@ -1,6 +1,6 @@
 import { beforeEach, expect, jest, test } from "@jest/globals";
 
-import type { HostElement } from "../host-element";
+import type { HostInstance } from "../host-element";
 import { createRoot } from "../renderer";
 import { ReactWorkTag } from "../test-utils/react-constants";
 import { getRootElement, renderWithAct } from "../test-utils/render";
@@ -30,8 +30,8 @@ test("basic parent/child relationships", async () => {
   );
 
   const root = getRootElement(renderer);
-  const item1 = root.children[0] as HostElement;
-  const item2 = root.children[1] as HostElement;
+  const item1 = root.children[0] as HostInstance;
+  const item2 = root.children[1] as HostInstance;
   expect(item1.props["data-testid"]).toBe("item-1");
   expect(item2.props["data-testid"]).toBe("item-2");
   expect(item1.parent).toBe(root);
