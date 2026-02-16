@@ -4,7 +4,7 @@ import { ConcurrentRoot } from "react-reconciler/constants";
 import { Tag } from "./constants";
 import { HostInstance } from "./host-instance";
 import { measureEnd, measureStart } from "./performance";
-import type { Container } from "./reconciler";
+import type { InternalContainer } from "./reconciler";
 import { TestReconciler } from "./reconciler";
 
 // Refs:
@@ -85,7 +85,7 @@ export type Root = {
 export function createRoot(options?: RootOptions): Root {
   measureStart("createRoot");
 
-  let container: Container | null = {
+  let container: InternalContainer | null = {
     tag: Tag.Container,
     parent: null,
     children: [],

@@ -3,7 +3,7 @@ import type { Fiber } from "react-reconciler";
 import { CONTAINER_TYPE, Tag } from "./constants";
 import type { QueryOptions } from "./query-all";
 import { queryAll } from "./query-all";
-import type { Container, Instance, TextInstance } from "./reconciler";
+import type { InternalContainer, InternalInstance, InternalTextInstance } from "./reconciler";
 import type { JsonElement } from "./render-to-json";
 import { renderContainerToJson, renderInstanceToJson } from "./render-to-json";
 
@@ -14,16 +14,16 @@ export type HostNode = HostInstance | string;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type HostInstanceProps = Record<string, any>;
 
-const instanceMap = new WeakMap<Instance | Container, HostInstance>();
+const instanceMap = new WeakMap<InternalInstance | InternalContainer, HostInstance>();
 
 /**
  * Represents a rendered host element in the test renderer tree.
  * Provides a DOM-like API for querying and inspecting rendered components.
  */
 export class HostInstance {
-  private instance: Instance | Container;
+  private instance: InternalInstance | InternalContainer;
 
-  private constructor(instance: Instance | Container) {
+  private constructor(instance: InternalInstance | InternalContainer) {
     this.instance = instance;
   }
 
@@ -89,7 +89,7 @@ export class HostInstance {
   }
 
   /** @internal */
-  static fromInstance(instance: Instance | Container): HostInstance {
+  static fromInstance(instance: InternalInstance | InternalContainer): HostInstance {
     const hostElement = instanceMap.get(instance);
     if (hostElement) {
       return hostElement;
@@ -101,7 +101,7 @@ export class HostInstance {
   }
 }
 
-function getHostNodeForInstance(instance: Instance | TextInstance): HostNode {
+function getHostNodeForInstance(instance: InternalInstance | InternalTextInstance): HostNode {
   switch (instance.tag) {
     case Tag.Text:
       return instance.text;

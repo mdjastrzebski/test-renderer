@@ -1,5 +1,5 @@
 import { CONTAINER_TYPE, Tag } from "./constants";
-import type { Container, Instance, TextInstance } from "./reconciler";
+import type { InternalContainer, InternalInstance, InternalTextInstance } from "./reconciler";
 
 /** A node in the JSON representation - either a JsonElement or a text string. */
 export type JsonNode = JsonElement | string;
@@ -15,7 +15,7 @@ export type JsonElement = {
   $$typeof: symbol;
 };
 
-export function renderContainerToJson(instance: Container): JsonElement {
+export function renderContainerToJson(instance: InternalContainer): JsonElement {
   return {
     type: CONTAINER_TYPE,
     props: {},
@@ -24,7 +24,7 @@ export function renderContainerToJson(instance: Container): JsonElement {
   };
 }
 
-export function renderInstanceToJson(instance: Instance): JsonElement | null {
+export function renderInstanceToJson(instance: InternalInstance): JsonElement | null {
   if (instance.isHidden) {
     return null;
   }
@@ -41,7 +41,7 @@ export function renderInstanceToJson(instance: Instance): JsonElement | null {
   };
 }
 
-export function renderTextInstanceToJson(instance: TextInstance): string | null {
+export function renderTextInstanceToJson(instance: InternalTextInstance): string | null {
   if (instance.isHidden) {
     return null;
   }
@@ -49,7 +49,9 @@ export function renderTextInstanceToJson(instance: TextInstance): string | null 
   return instance.text;
 }
 
-export function renderChildrenToJson(children: Array<Instance | TextInstance>): JsonNode[] {
+export function renderChildrenToJson(
+  children: Array<InternalInstance | InternalTextInstance>,
+): JsonNode[] {
   const result = [];
 
   for (const child of children) {
