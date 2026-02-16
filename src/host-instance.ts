@@ -90,9 +90,9 @@ export class HostInstance {
 
   /** @internal */
   static fromInstance(instance: InternalInstance | InternalContainer): HostInstance {
-    const hostElement = instanceMap.get(instance);
-    if (hostElement) {
-      return hostElement;
+    const hostInstance = instanceMap.get(instance);
+    if (hostInstance) {
+      return hostInstance;
     }
 
     const result = new HostInstance(instance);
