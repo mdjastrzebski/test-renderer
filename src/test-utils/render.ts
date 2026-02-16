@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { act as reactAct } from "react";
 
-import type { HostInstance } from "../host-element";
+import type { HostInstance } from "../host-instance";
 import { mark } from "../performance";
 import type { Root } from "../renderer";
 

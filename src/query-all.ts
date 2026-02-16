@@ -1,4 +1,4 @@
-import type { HostInstance } from "./host-element";
+import type { HostInstance } from "./host-instance";
 
 /**
  * Options for querying elements in the rendered tree.

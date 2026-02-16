@@ -1,7 +1,7 @@
 export { createRoot } from "./renderer";
 
 export type { Root, RootOptions } from "./renderer";
-export type { HostInstance, HostInstanceProps, HostNode } from "./host-element";
+export type { HostInstance, HostInstanceProps, HostNode } from "./host-instance";
 export type { JsonElement, JsonNode } from "./render-to-json";
 export type { QueryOptions } from "./query-all";
 

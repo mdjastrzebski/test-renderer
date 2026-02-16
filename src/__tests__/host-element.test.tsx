@@ -1,6 +1,6 @@
 import { beforeEach, expect, jest, test } from "@jest/globals";
 
-import type { HostInstance } from "../host-element";
+import type { HostInstance } from "../host-instance";
 import { createRoot } from "../renderer";
 import { ReactWorkTag } from "../test-utils/react-constants";
 import { getRootElement, renderWithAct } from "../test-utils/render";

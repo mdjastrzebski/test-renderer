@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import { ConcurrentRoot } from "react-reconciler/constants";
 
 import { Tag } from "./constants";
-import { HostInstance } from "./host-element";
+import { HostInstance } from "./host-instance";
 import { measureEnd, measureStart } from "./performance";
 import type { Container } from "./reconciler";
 import { TestReconciler } from "./reconciler";
