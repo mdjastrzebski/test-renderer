@@ -44,6 +44,26 @@ This library supports all modern React features including:
 - Error boundaries
 - Suspense boundaries
 
+## Test Output Tree
+
+Instead of producing a DOM tree or a native view hierarchy, the renderer builds an in-memory **Test Output Tree**:
+
+- Composed of **`TestNode`s**, where each node is either:
+  - A **`TestElement`** — represents a host element such as `div` or `View`
+  - A plain **`string`** — represents a text node
+- The root is accessible via `root.container`, a `TestElement` whose `type` is an empty string
+- `TestElement` nodes are traversable and queryable — see the [`TestElement`](#testelement) API below
+
+## JSON Output Tree
+
+Calling `toJSON()` on a `TestElement` produces a **JSON Output Tree** — a static, plain-object snapshot of the Test Output Tree at that point in time:
+
+- Composed of **`JsonNode`s**, where each node is either:
+  - A **`JsonElement`** — a plain object with `type`, `props`, and `children`
+  - A plain **`string`** — a text node
+- Contains no live references, making it safe to serialize
+- Ideal for snapshot testing
+
 ## API Reference
 
 ### `createRoot(options?)`
