@@ -1,7 +1,7 @@
 export { createRoot } from "./renderer";
 
 export type { Root, RootOptions } from "./renderer";
-export type { TestElement, TestElementProps, TestNode } from "./test-element";
+export type { TestElement, TestNode } from "./test-element";
 export type { JsonElement, JsonNode } from "./to-json";
 export type { QueryOptions } from "./query-all";
 
