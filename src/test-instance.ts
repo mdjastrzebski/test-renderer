@@ -7,20 +7,20 @@ import type { InternalContainer, InternalInstance, InternalTextInstance } from "
 import type { JsonElement } from "./render-to-json";
 import { renderContainerToJson, renderInstanceToJson } from "./render-to-json";
 
-/** A node in the rendered tree - either a HostInstance or a text string. */
-export type HostNode = HostInstance | string;
+/** A node in the rendered tree - either a TestInstance or a text string. */
+export type TestNode = TestInstance | string;
 
 /** Props object for a host element. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type HostInstanceProps = Record<string, any>;
+export type TestInstanceProps = Record<string, any>;
 
-const instanceMap = new WeakMap<InternalInstance | InternalContainer, HostInstance>();
+const instanceMap = new WeakMap<InternalInstance | InternalContainer, TestInstance>();
 
 /**
  * Represents a rendered host element in the test renderer tree.
  * Provides a DOM-like API for querying and inspecting rendered components.
  */
-export class HostInstance {
+export class TestInstance {
   private instance: InternalInstance | InternalContainer;
 
   private constructor(instance: InternalInstance | InternalContainer) {
@@ -33,25 +33,25 @@ export class HostInstance {
   }
 
   /** The element's props object. */
-  get props(): HostInstanceProps {
+  get props(): TestInstanceProps {
     return this.instance.tag === Tag.Instance ? this.instance.props : {};
   }
 
   /** The parent element, or null if this is the root container. */
-  get parent(): HostInstance | null {
+  get parent(): TestInstance | null {
     const parentInstance = this.instance.parent;
     if (parentInstance == null) {
       return null;
     }
 
-    return HostInstance.fromInstance(parentInstance);
+    return TestInstance.fromInstance(parentInstance);
   }
 
   /** Array of child nodes (elements and text strings). Hidden children are excluded. */
-  get children(): HostNode[] {
+  get children(): TestNode[] {
     const result = this.instance.children
       .filter((child) => !child.isHidden)
-      .map((child) => getHostNodeForInstance(child));
+      .map((child) => getTestNodeForInstance(child));
     return result;
   }
 
@@ -84,29 +84,29 @@ export class HostInstance {
    * @param options - Optional query configuration.
    * @returns Array of matching elements.
    */
-  queryAll(predicate: (element: HostInstance) => boolean, options?: QueryOptions): HostInstance[] {
+  queryAll(predicate: (instance: TestInstance) => boolean, options?: QueryOptions): TestInstance[] {
     return queryAll(this, predicate, options);
   }
 
   /** @internal */
-  static fromInstance(instance: InternalInstance | InternalContainer): HostInstance {
-    const hostInstance = instanceMap.get(instance);
-    if (hostInstance) {
-      return hostInstance;
+  static fromInstance(instance: InternalInstance | InternalContainer): TestInstance {
+    const testInstance = instanceMap.get(instance);
+    if (testInstance) {
+      return testInstance;
     }
 
-    const result = new HostInstance(instance);
+    const result = new TestInstance(instance);
     instanceMap.set(instance, result);
     return result;
   }
 }
 
-function getHostNodeForInstance(instance: InternalInstance | InternalTextInstance): HostNode {
+function getTestNodeForInstance(instance: InternalInstance | InternalTextInstance): TestNode {
   switch (instance.tag) {
     case Tag.Text:
       return instance.text;
 
     case Tag.Instance:
-      return HostInstance.fromInstance(instance);
+      return TestInstance.fromInstance(instance);
   }
 }

@@ -58,7 +58,7 @@ Creates a new test renderer root instance.
 
 - `render(element: ReactElement)`: Renders a React element into the root. Must be called within `act()`.
 - `unmount()`: Unmounts the root and cleans up. Must be called within `act()`.
-- `container`: A `HostInstance` wrapper that contains the rendered element(s). Use this to query and inspect the rendered tree.
+- `container`: A `TestInstance` wrapper that contains the rendered element(s). Use this to query and inspect the rendered tree.
 
 **Example:**
 
@@ -84,22 +84,22 @@ Configuration options for the test renderer. Many of these options correspond to
 | `onUncaughtError`          | `(error: unknown, errorInfo: { componentStack?: string }) => void` | Callback called when an error is thrown and not caught by an Error Boundary. Called with the error that was thrown and an errorInfo object containing the component stack.                                                              |
 | `onRecoverableError`       | `(error: unknown, errorInfo: { componentStack?: string }) => void` | Callback called when React automatically recovers from errors. Called with an error React throws and an errorInfo object containing the component stack. Some recoverable errors may include the original error cause as `error.cause`. |
 
-### `HostInstance`
+### `TestInstance`
 
 A wrapper around rendered host elements with a DOM-like API for querying and inspecting the rendered tree.
 
 **Properties:**
 
 - `type: string`: The element type (e.g., `"View"`, `"div"`). Returns an empty string for the container element.
-- `props: HostInstanceProps`: The element's props object.
+- `props: TestInstanceProps`: The element's props object.
 - `children: HostNode[]`: Array of child nodes (elements and text strings). Hidden children are excluded.
-- `parent: HostInstance | null`: The parent element, or `null` if this is the root container.
+- `parent: TestInstance | null`: The parent element, or `null` if this is the root container.
 - `unstable_fiber: Fiber | null`: Access to the underlying React Fiber node. **Warning:** This is an unstable API that exposes internal React Reconciler structures which may change without warning in future React versions. Use with caution and only when absolutely necessary.
 
 **Methods:**
 
 - `toJSON(): JsonElement | null`: Converts this element to a JSON representation suitable for snapshots. Returns `null` if the element is hidden.
-- `queryAll(predicate: (element: HostInstance) => boolean, options?: QueryOptions): HostInstance[]`: Finds all descendant elements matching the predicate. See [Query Options](#query-options) below.
+- `queryAll(predicate: (instance: TestInstance) => boolean, options?: QueryOptions): TestInstance[]`: Finds all descendant elements matching the predicate. See [Query Options](#query-options) below.
 
 **Example:**
 
@@ -109,7 +109,7 @@ await act(async () => {
   renderer.render(<div className="container">Hello</div>);
 });
 
-const root = renderer.container.children[0] as HostInstance;
+const root = renderer.container.children[0] as TestInstance;
 expect(root.type).toBe("div");
 expect(root.props.className).toBe("container");
 expect(root.children).toContain("Hello");

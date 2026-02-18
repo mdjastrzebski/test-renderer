@@ -1,9 +1,9 @@
 import { beforeEach, expect, jest, test } from "@jest/globals";
 
-import type { HostInstance } from "../host-instance";
 import { createRoot } from "../renderer";
+import type { TestInstance } from "../test-instance";
 import { ReactWorkTag } from "../test-utils/react-constants";
-import { getRootElement, renderWithAct } from "../test-utils/render";
+import { getRootInstance, renderWithAct } from "../test-utils/render";
 
 beforeEach(() => {
   global.IS_REACT_ACT_ENVIRONMENT = true;
@@ -13,7 +13,7 @@ test("container is root's parent", async () => {
   const renderer = createRoot();
   await renderWithAct(renderer, <div>Hello!</div>);
 
-  const root = getRootElement(renderer);
+  const root = getRootInstance(renderer);
   expect(root).toBeTruthy();
   expect(root.parent).toBe(renderer.container);
   expect(root.parent!.parent).toBeNull();
@@ -29,9 +29,9 @@ test("basic parent/child relationships", async () => {
     </div>,
   );
 
-  const root = getRootElement(renderer);
-  const item1 = root.children[0] as HostInstance;
-  const item2 = root.children[1] as HostInstance;
+  const root = getRootInstance(renderer);
+  const item1 = root.children[0] as TestInstance;
+  const item2 = root.children[1] as TestInstance;
   expect(item1.props["data-testid"]).toBe("item-1");
   expect(item2.props["data-testid"]).toBe("item-2");
   expect(item1.parent).toBe(root);
@@ -42,7 +42,7 @@ test("host elements exposes fiber instance", async () => {
   const renderer = createRoot();
   await renderWithAct(renderer, <div>Hello!</div>);
 
-  const root = getRootElement(renderer);
+  const root = getRootInstance(renderer);
   const fiber = root.unstable_fiber!;
   expect(fiber.tag).toBe(ReactWorkTag.HostComponent);
   expect(fiber.return!.tag).toBe(ReactWorkTag.HostRoot);
@@ -62,7 +62,7 @@ test("can access composite parent props", async () => {
   const renderer = createRoot();
   await renderWithAct(renderer, <TestComponent className="test-class" onChange={handleChange} />);
 
-  const root = getRootElement(renderer);
+  const root = getRootInstance(renderer);
   expect(root.props).toEqual({ className: "test-class", children: "Hello!" });
 
   const fiber = root.unstable_fiber!;
@@ -136,7 +136,7 @@ test("queryAll should not return self by default", async () => {
     </body>,
   );
 
-  const elements = getRootElement(renderer).queryAll(
+  const elements = getRootInstance(renderer).queryAll(
     (element) => element.props.className === "yes",
   );
   expect(elements).toHaveLength(2);
@@ -155,7 +155,7 @@ test("queryAll should return self if 'includeSelf' is true", async () => {
     </body>,
   );
 
-  const elements = getRootElement(renderer).queryAll(
+  const elements = getRootInstance(renderer).queryAll(
     (element) => element.props.className === "yes",
     {
       includeSelf: true,
