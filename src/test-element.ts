@@ -3,27 +3,23 @@ import type { Fiber } from "react-reconciler";
 import { CONTAINER_TYPE, Tag } from "./constants";
 import type { QueryOptions } from "./query-all";
 import { queryAll } from "./query-all";
-import type { InternalContainer, InternalInstance, InternalTextInstance } from "./reconciler";
-import type { JsonElement } from "./render-to-json";
-import { renderContainerToJson, renderInstanceToJson } from "./render-to-json";
+import type { Container, Instance, TextInstance } from "./reconciler";
+import type { JsonElement } from "./to-json";
+import { containerToJson, instanceToJson } from "./to-json";
 
-/** A node in the rendered tree - either a TestInstance or a text string. */
-export type TestNode = TestInstance | string;
+/** A node in the rendered tree - either a TestElement or a text string. */
+export type TestNode = TestElement | string;
 
-/** Props object for a host element. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TestInstanceProps = Record<string, any>;
-
-const instanceMap = new WeakMap<InternalInstance | InternalContainer, TestInstance>();
+const instanceMap = new WeakMap<Instance | Container, TestElement>();
 
 /**
  * Represents a rendered host element in the test renderer tree.
  * Provides a DOM-like API for querying and inspecting rendered components.
  */
-export class TestInstance {
-  private instance: InternalInstance | InternalContainer;
+export class TestElement {
+  private instance: Instance | Container;
 
-  private constructor(instance: InternalInstance | InternalContainer) {
+  private constructor(instance: Instance | Container) {
     this.instance = instance;
   }
 
@@ -33,18 +29,19 @@ export class TestInstance {
   }
 
   /** The element's props object. */
-  get props(): TestInstanceProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get props(): Record<string, any> {
     return this.instance.tag === Tag.Instance ? this.instance.props : {};
   }
 
   /** The parent element, or null if this is the root container. */
-  get parent(): TestInstance | null {
+  get parent(): TestElement | null {
     const parentInstance = this.instance.parent;
     if (parentInstance == null) {
       return null;
     }
 
-    return TestInstance.fromInstance(parentInstance);
+    return TestElement.fromInstance(parentInstance);
   }
 
   /** Array of child nodes (elements and text strings). Hidden children are excluded. */
@@ -73,8 +70,8 @@ export class TestInstance {
    */
   toJSON(): JsonElement | null {
     return this.instance.tag === Tag.Container
-      ? renderContainerToJson(this.instance)
-      : renderInstanceToJson(this.instance);
+      ? containerToJson(this.instance)
+      : instanceToJson(this.instance);
   }
 
   /**
@@ -84,29 +81,29 @@ export class TestInstance {
    * @param options - Optional query configuration.
    * @returns Array of matching elements.
    */
-  queryAll(predicate: (instance: TestInstance) => boolean, options?: QueryOptions): TestInstance[] {
+  queryAll(predicate: (element: TestElement) => boolean, options?: QueryOptions): TestElement[] {
     return queryAll(this, predicate, options);
   }
 
   /** @internal */
-  static fromInstance(instance: InternalInstance | InternalContainer): TestInstance {
-    const testInstance = instanceMap.get(instance);
-    if (testInstance) {
-      return testInstance;
+  static fromInstance(instance: Instance | Container): TestElement {
+    const testElement = instanceMap.get(instance);
+    if (testElement) {
+      return testElement;
     }
 
-    const result = new TestInstance(instance);
+    const result = new TestElement(instance);
     instanceMap.set(instance, result);
     return result;
   }
 }
 
-function getTestNodeForInstance(instance: InternalInstance | InternalTextInstance): TestNode {
+function getTestNodeForInstance(instance: Instance | TextInstance): TestNode {
   switch (instance.tag) {
     case Tag.Text:
       return instance.text;
 
     case Tag.Instance:
-      return TestInstance.fromInstance(instance);
+      return TestElement.fromInstance(instance);
   }
 }

@@ -3,7 +3,7 @@ import { act as reactAct } from "react";
 
 import { mark } from "../performance";
 import type { Root } from "../renderer";
-import type { TestInstance } from "../test-instance";
+import type { TestElement } from "../test-element";
 
 /** @internal */
 export async function act<T>(callback: () => T | Promise<T>): Promise<T> {
@@ -33,7 +33,7 @@ export async function unmountWithAct(root: Root) {
 }
 
 /** @internal */
-export function getRootInstance(renderer: Root): TestInstance {
+export function getRootInstance(renderer: Root): TestElement {
   const firstChild = renderer.container.children[0];
   if (typeof firstChild === "string") {
     throw new Error(`Root element should not be text (got "${firstChild}")`);

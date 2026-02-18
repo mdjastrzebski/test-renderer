@@ -3,9 +3,9 @@ import { ConcurrentRoot } from "react-reconciler/constants";
 
 import { Tag } from "./constants";
 import { measureEnd, measureStart } from "./performance";
-import type { InternalContainer } from "./reconciler";
+import type { Container } from "./reconciler";
 import { TestReconciler } from "./reconciler";
-import { TestInstance } from "./test-instance";
+import { TestElement } from "./test-element";
 
 // Refs:
 // https://github.com/facebook/react/blob/main/packages/react-test-renderer/src/ReactFiberConfigTestHost.js
@@ -73,7 +73,7 @@ export type Root = {
   /** Unmount the root and clean up. Must be called within act(). */
   unmount: () => void;
   /** The root container element. */
-  container: TestInstance;
+  container: TestElement;
 };
 
 /**
@@ -85,7 +85,7 @@ export type Root = {
 export function createRoot(options?: RootOptions): Root {
   measureStart("createRoot");
 
-  let container: InternalContainer | null = {
+  let container: Container | null = {
     tag: Tag.Container,
     parent: null,
     children: [],
@@ -151,12 +151,12 @@ export function createRoot(options?: RootOptions): Root {
   return {
     render,
     unmount,
-    get container(): TestInstance {
+    get container(): TestElement {
       if (container == null) {
         throw new Error("Cannot access .container on unmounted test renderer");
       }
 
-      return TestInstance.fromInstance(container);
+      return TestElement.fromInstance(container);
     },
   };
 }
