@@ -111,7 +111,7 @@ A wrapper around rendered host elements with a DOM-like API for querying and ins
 **Properties:**
 
 - `type: string`: The element type (e.g., `"View"`, `"div"`). Returns an empty string for the container element.
-- `props: TestElementProps`: The element's props object.
+- `props: Record<string, all>`: The element's props object.
 - `children: HostNode[]`: Array of child nodes (elements and text strings). Hidden children are excluded.
 - `parent: TestInstance | null`: The parent element, or `null` if this is the root container.
 - `unstable_fiber: Fiber | null`: Access to the underlying React Fiber node. **Warning:** This is an unstable API that exposes internal React Reconciler structures which may change without warning in future React versions. Use with caution and only when absolutely necessary.

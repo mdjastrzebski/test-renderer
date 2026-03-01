@@ -36,7 +36,7 @@ export async function unmountWithAct(root: Root) {
 export function getRootInstance(renderer: Root): TestInstance {
   const firstChild = renderer.container.children[0];
   if (typeof firstChild === "string") {
-    throw new Error(`Root element should not be text (got "${firstChild}")`);
+    throw new Error(`Root instance should not be text (got "${firstChild}")`);
   }
 
   return firstChild;
