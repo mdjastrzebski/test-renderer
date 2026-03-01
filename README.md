@@ -49,14 +49,14 @@ This library supports all modern React features including:
 Instead of producing a DOM tree or a native view hierarchy, the renderer builds an in-memory **Test Output Tree**:
 
 - Composed of **`TestNode`s**, where each node is either:
-  - A **`TestElement`** — represents a host element such as `div` or `View`
+  - A **`TestInstance`** — represents a host element such as `div` or `View`
   - A plain **`string`** — represents a text node
-- The root is accessible via `root.container`, a `TestElement` whose `type` is an empty string
-- `TestElement` nodes are traversable and queryable — see the [`TestElement`](#testelement) API below
+- The root is accessible via `root.container`, a `TestInstance` whose `type` is an empty string
+- `TestInstance` nodes are traversable and queryable — see the [`TestInstance`](#testelement) API below
 
 ## JSON Output Tree
 
-Calling `toJSON()` on a `TestElement` produces a **JSON Output Tree** — a static, plain-object snapshot of the Test Output Tree at that point in time:
+Calling `toJSON()` on a `TestInstance` produces a **JSON Output Tree** — a static, plain-object snapshot of the Test Output Tree at that point in time:
 
 - Composed of **`JsonNode`s**, where each node is either:
   - A **`JsonElement`** — a plain object with `type`, `props`, and `children`
@@ -78,7 +78,7 @@ Creates a new test renderer root instance.
 
 - `render(element: ReactElement)`: Renders a React element into the root. Must be called within `act()`.
 - `unmount()`: Unmounts the root and cleans up. Must be called within `act()`.
-- `container`: A `TestElement` wrapper that contains the rendered element(s). Use this to query and inspect the rendered tree.
+- `container`: A `TestInstance` wrapper that contains the rendered element(s). Use this to query and inspect the rendered tree.
 
 **Example:**
 
@@ -104,7 +104,7 @@ Configuration options for the test renderer. Many of these options correspond to
 | `onUncaughtError`          | `(error: unknown, errorInfo: { componentStack?: string }) => void` | Callback called when an error is thrown and not caught by an Error Boundary. Called with the error that was thrown and an errorInfo object containing the component stack.                                                              |
 | `onRecoverableError`       | `(error: unknown, errorInfo: { componentStack?: string }) => void` | Callback called when React automatically recovers from errors. Called with an error React throws and an errorInfo object containing the component stack. Some recoverable errors may include the original error cause as `error.cause`. |
 
-### `TestElement`
+### `TestInstance` {#test-instance}
 
 A wrapper around rendered host elements with a DOM-like API for querying and inspecting the rendered tree.
 
@@ -113,13 +113,13 @@ A wrapper around rendered host elements with a DOM-like API for querying and ins
 - `type: string`: The element type (e.g., `"View"`, `"div"`). Returns an empty string for the container element.
 - `props: TestElementProps`: The element's props object.
 - `children: HostNode[]`: Array of child nodes (elements and text strings). Hidden children are excluded.
-- `parent: TestElement | null`: The parent element, or `null` if this is the root container.
+- `parent: TestInstance | null`: The parent element, or `null` if this is the root container.
 - `unstable_fiber: Fiber | null`: Access to the underlying React Fiber node. **Warning:** This is an unstable API that exposes internal React Reconciler structures which may change without warning in future React versions. Use with caution and only when absolutely necessary.
 
 **Methods:**
 
 - `toJSON(): JsonElement | null`: Converts this element to a JSON representation suitable for snapshots. Returns `null` if the element is hidden.
-- `queryAll(predicate: (instance: TestElement) => boolean, options?: QueryOptions): TestElement[]`: Finds all descendant elements matching the predicate. See [Query Options](#query-options) below.
+- `queryAll(predicate: (instance: TestInstance) => boolean, options?: QueryOptions): TestInstance[]`: Finds all descendant elements matching the predicate. See [Query Options](#query-options) below.
 
 **Example:**
 
@@ -129,7 +129,7 @@ await act(async () => {
   renderer.render(<div className="container">Hello</div>);
 });
 
-const root = renderer.container.children[0] as TestElement;
+const root = renderer.container.children[0] as TestInstance;
 expect(root.type).toBe("div");
 expect(root.props.className).toBe("container");
 expect(root.children).toContain("Hello");

@@ -5,7 +5,7 @@ import { Tag } from "./constants";
 import { measureEnd, measureStart } from "./performance";
 import type { Container } from "./reconciler";
 import { TestReconciler } from "./reconciler";
-import { TestElement } from "./test-element";
+import { TestInstance } from "./test-instance";
 
 // Refs:
 // https://github.com/facebook/react/blob/main/packages/react-test-renderer/src/ReactFiberConfigTestHost.js
@@ -73,7 +73,7 @@ export type Root = {
   /** Unmount the root and clean up. Must be called within act(). */
   unmount: () => void;
   /** The root container element. */
-  container: TestElement;
+  container: TestInstance;
 };
 
 /**
@@ -151,12 +151,12 @@ export function createRoot(options?: RootOptions): Root {
   return {
     render,
     unmount,
-    get container(): TestElement {
+    get container(): TestInstance {
       if (container == null) {
         throw new Error("Cannot access .container on unmounted test renderer");
       }
 
-      return TestElement.fromInstance(container);
+      return TestInstance.fromInstance(container);
     },
   };
 }

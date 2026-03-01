@@ -1,7 +1,7 @@
 import { beforeEach, expect, jest, test } from "@jest/globals";
 
 import { createRoot } from "../renderer";
-import type { TestElement } from "../test-element";
+import type { TestInstance } from "../test-instance";
 import { ReactWorkTag } from "../test-utils/react-constants";
 import { getRootInstance, renderWithAct } from "../test-utils/render";
 
@@ -30,8 +30,8 @@ test("basic parent/child relationships", async () => {
   );
 
   const root = getRootInstance(renderer);
-  const item1 = root.children[0] as TestElement;
-  const item2 = root.children[1] as TestElement;
+  const item1 = root.children[0] as TestInstance;
+  const item2 = root.children[1] as TestInstance;
   expect(item1.props["data-testid"]).toBe("item-1");
   expect(item2.props["data-testid"]).toBe("item-2");
   expect(item1.parent).toBe(root);

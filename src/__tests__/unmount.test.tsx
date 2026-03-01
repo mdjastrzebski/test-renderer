@@ -11,11 +11,11 @@ test("unmount clears the rendered content", async () => {
   const renderer = createRoot();
   await renderWithAct(renderer, <div>Hello!</div>);
 
-  const containerElement = renderer.container;
-  expect(containerElement.children.length).toBe(1);
+  const container = renderer.container;
+  expect(container.children.length).toBe(1);
 
   await unmountWithAct(renderer);
-  expect(containerElement.children.length).toBe(0);
+  expect(container.children.length).toBe(0);
 
   expect(() => renderer.container).toThrow("Cannot access .container on unmounted test renderer");
 });
@@ -24,13 +24,13 @@ test("unmount can be called multiple times safely", async () => {
   const renderer = createRoot();
   await renderWithAct(renderer, <div>Hello!</div>);
 
-  const containerElement = renderer.container;
-  expect(containerElement.children.length).toBe(1);
+  const container = renderer.container;
+  expect(container.children.length).toBe(1);
 
   await unmountWithAct(renderer);
   await unmountWithAct(renderer);
   await unmountWithAct(renderer);
-  expect(containerElement.children.length).toBe(0);
+  expect(container.children.length).toBe(0);
 
   expect(() => renderer.container).toThrow("Cannot access .container on unmounted test renderer");
 });

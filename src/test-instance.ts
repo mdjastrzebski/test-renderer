@@ -7,16 +7,16 @@ import type { Container, Instance, TextInstance } from "./reconciler";
 import type { JsonElement } from "./to-json";
 import { containerToJson, instanceToJson } from "./to-json";
 
-/** A node in the rendered tree - either a TestElement or a text string. */
-export type TestNode = TestElement | string;
+/** A node in the rendered tree - either a TestInstance or a text string. */
+export type TestNode = TestInstance | string;
 
-const instanceMap = new WeakMap<Instance | Container, TestElement>();
+const instanceMap = new WeakMap<Instance | Container, TestInstance>();
 
 /**
  * Represents a rendered host element in the test renderer tree.
  * Provides a DOM-like API for querying and inspecting rendered components.
  */
-export class TestElement {
+export class TestInstance {
   private instance: Instance | Container;
 
   private constructor(instance: Instance | Container) {
@@ -35,13 +35,13 @@ export class TestElement {
   }
 
   /** The parent element, or null if this is the root container. */
-  get parent(): TestElement | null {
+  get parent(): TestInstance | null {
     const parentInstance = this.instance.parent;
     if (parentInstance == null) {
       return null;
     }
 
-    return TestElement.fromInstance(parentInstance);
+    return TestInstance.fromInstance(parentInstance);
   }
 
   /** Array of child nodes (elements and text strings). Hidden children are excluded. */
@@ -81,18 +81,18 @@ export class TestElement {
    * @param options - Optional query configuration.
    * @returns Array of matching elements.
    */
-  queryAll(predicate: (element: TestElement) => boolean, options?: QueryOptions): TestElement[] {
+  queryAll(predicate: (instance: TestInstance) => boolean, options?: QueryOptions): TestInstance[] {
     return queryAll(this, predicate, options);
   }
 
   /** @internal */
-  static fromInstance(instance: Instance | Container): TestElement {
-    const testElement = instanceMap.get(instance);
-    if (testElement) {
-      return testElement;
+  static fromInstance(instance: Instance | Container): TestInstance {
+    const testInstance = instanceMap.get(instance);
+    if (testInstance) {
+      return testInstance;
     }
 
-    const result = new TestElement(instance);
+    const result = new TestInstance(instance);
     instanceMap.set(instance, result);
     return result;
   }
@@ -104,6 +104,6 @@ function getTestNodeForInstance(instance: Instance | TextInstance): TestNode {
       return instance.text;
 
     case Tag.Instance:
-      return TestElement.fromInstance(instance);
+      return TestInstance.fromInstance(instance);
   }
 }
