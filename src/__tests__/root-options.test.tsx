@@ -1,10 +1,9 @@
 import { beforeEach, expect, jest, test } from "@jest/globals";
 import { Component, Suspense, use, useEffect, useId } from "react";
 
+import type { Props } from "../reconciler";
 import { createRoot } from "../renderer";
-import { act, getRootInstance, renderWithAct } from "../test-utils/render";
-import type { JsonElement, JsonNode } from "../to-json";
-import { Props } from "../reconciler";
+import { act, renderWithAct } from "../test-utils/render";
 
 beforeEach(() => {
   global.IS_REACT_ACT_ENVIRONMENT = true;
