@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, test } from "@jest/globals";
-import { createElement } from "react";
+import { createElement, createRef, type Ref } from "react";
 
 import { createRoot } from "../renderer";
-import { renderWithAct } from "../test-utils/render";
+import type { TestInstance } from "../test-instance";
+import { getRootInstance, renderWithAct } from "../test-utils/render";
 
 beforeEach(() => {
   global.IS_REACT_ACT_ENVIRONMENT = true;
@@ -18,6 +19,14 @@ test("basic renderer usage", async () => {
       </div>
     </>
   `);
+});
+
+test("refs receive TestInstance by default", async () => {
+  const renderer = createRoot();
+  const ref = createRef<TestInstance | null>();
+  await renderWithAct(renderer, <div ref={ref as Ref<HTMLDivElement>}>Hello</div>);
+  const rootInstance = getRootInstance(renderer);
+  expect(ref.current).toBe(rootInstance);
 });
 
 describe("textComponentTypes", () => {

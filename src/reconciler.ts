@@ -1,10 +1,10 @@
-import type { ReactElement } from "react";
 import type { Fiber } from "react-reconciler";
 import ReactReconciler from "react-reconciler";
 import { DefaultEventPriority, NoEventPriority } from "react-reconciler/constants";
 
 import { Tag } from "./constants";
 import { mark, measureEnd, measureStart } from "./performance";
+import { TestInstance } from "./test-instance";
 import { formatComponentList } from "./utils";
 
 export type Type = string;
@@ -14,7 +14,6 @@ export type TransformHiddenInstanceProps = (input: { props: Props; type: Type })
 type ReconcilerConfig = {
   textComponentTypes?: string[];
   publicTextComponentTypes?: string[];
-  createNodeMock: (element: ReactElement) => object;
   transformHiddenInstanceProps?: TransformHiddenInstanceProps;
 };
 
@@ -48,7 +47,7 @@ export type TextInstance = {
 
 export type SuspenseInstance = object;
 export type HydratableInstance = object;
-export type PublicInstance = object | TextInstance;
+export type PublicInstance = object | null;
 export type UpdatePayload = unknown;
 export type ChildSet = unknown;
 export type TimeoutHandle = unknown;
@@ -351,20 +350,13 @@ const hostConfig: ReactReconciler.HostConfig<
 
     switch (instance.tag) {
       case Tag.Instance: {
-        const createNodeMock = instance.rootContainer.config.createNodeMock;
-        const mockNode = createNodeMock({
-          type: instance.type,
-          props: instance.props,
-          key: null,
-        });
-
-        nodeToInstanceMap.set(mockNode, instance);
-
-        return mockNode;
+        const testInstance = TestInstance.fromInstance(instance);
+        nodeToInstanceMap.set(testInstance, instance);
+        return testInstance;
       }
 
       default:
-        return instance;
+        return null;
     }
   },
 
