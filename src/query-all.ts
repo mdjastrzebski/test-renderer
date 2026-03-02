@@ -1,38 +1,38 @@
-import type { HostElement } from "./host-element";
+import type { TestInstance } from "./test-instance";
 
 /**
  * Options for querying elements in the rendered tree.
  */
 export interface QueryOptions {
-  /** Include the element itself in the results if it matches the predicate. Defaults to false. */
+  /** Include the instance itself in the results if it matches the predicate. Defaults to false. */
   includeSelf?: boolean;
 
-  /** Exclude any ancestors of deepest matched elements even if they match the predicate. Defaults to false. */
+  /** Exclude any ancestors of deepest matched instances even if they match the predicate. Defaults to false. */
   matchDeepestOnly?: boolean;
 }
 
 /**
  * Find all descendant elements matching the predicate.
  *
- * @param element - Root element to search from.
+ * @param instance - Root TestInstance to search from.
  * @param predicate - Function that returns true for matching elements.
  * @param options - Optional query configuration.
  * @returns Array of matching elements in tree order.
  */
 export function queryAll(
-  element: HostElement,
-  predicate: (element: HostElement) => boolean,
+  instance: TestInstance,
+  predicate: (instance: TestInstance) => boolean,
   options?: QueryOptions,
-): HostElement[] {
+): TestInstance[] {
   const includeSelf = options?.includeSelf ?? false;
   const matchDeepestOnly = options?.matchDeepestOnly ?? false;
 
-  const results: HostElement[] = [];
+  const results: TestInstance[] = [];
 
   // Match descendants first but do not add them to results yet.
-  const matchingDescendants: HostElement[] = [];
+  const matchingDescendants: TestInstance[] = [];
 
-  element.children.forEach((child) => {
+  instance.children.forEach((child) => {
     if (typeof child === "string") {
       return;
     }
@@ -44,9 +44,9 @@ export function queryAll(
     includeSelf &&
     // When matchDeepestOnly = true: add current element only if no descendants match
     (matchingDescendants.length === 0 || !matchDeepestOnly) &&
-    predicate(element)
+    predicate(instance)
   ) {
-    results.push(element);
+    results.push(instance);
   }
 
   // Add matching descendants after element to preserve original tree walk order.

@@ -15,16 +15,16 @@ export type JsonElement = {
   $$typeof: symbol;
 };
 
-export function renderContainerToJson(instance: Container): JsonElement {
+export function containerToJson(instance: Container): JsonElement {
   return {
     type: CONTAINER_TYPE,
     props: {},
-    children: renderChildrenToJson(instance.children),
+    children: childrenToJson(instance.children),
     $$typeof: Symbol.for("react.test.json"),
   };
 }
 
-export function renderInstanceToJson(instance: Instance): JsonElement | null {
+export function instanceToJson(instance: Instance): JsonElement | null {
   if (instance.isHidden) {
     return null;
   }
@@ -36,12 +36,12 @@ export function renderInstanceToJson(instance: Instance): JsonElement | null {
   return {
     type: instance.type,
     props: restProps,
-    children: renderChildrenToJson(instance.children),
+    children: childrenToJson(instance.children),
     $$typeof: Symbol.for("react.test.json"),
   };
 }
 
-export function renderTextInstanceToJson(instance: TextInstance): string | null {
+export function textInstanceToJson(instance: TextInstance): string | null {
   if (instance.isHidden) {
     return null;
   }
@@ -49,17 +49,17 @@ export function renderTextInstanceToJson(instance: TextInstance): string | null 
   return instance.text;
 }
 
-export function renderChildrenToJson(children: Array<Instance | TextInstance>): JsonNode[] {
+export function childrenToJson(children: Array<Instance | TextInstance>): JsonNode[] {
   const result = [];
 
   for (const child of children) {
     if (child.tag === Tag.Instance) {
-      const renderedChild = renderInstanceToJson(child);
+      const renderedChild = instanceToJson(child);
       if (renderedChild != null) {
         result.push(renderedChild);
       }
     } else {
-      const renderedChild = renderTextInstanceToJson(child);
+      const renderedChild = textInstanceToJson(child);
       if (renderedChild != null) {
         result.push(renderedChild);
       }

@@ -4,23 +4,19 @@ import { CONTAINER_TYPE, Tag } from "./constants";
 import type { QueryOptions } from "./query-all";
 import { queryAll } from "./query-all";
 import type { Container, Instance, TextInstance } from "./reconciler";
-import type { JsonElement } from "./render-to-json";
-import { renderContainerToJson, renderInstanceToJson } from "./render-to-json";
+import type { JsonElement } from "./to-json";
+import { containerToJson, instanceToJson } from "./to-json";
 
-/** A node in the rendered tree - either a HostElement or a text string. */
-export type HostNode = HostElement | string;
+/** A node in the rendered tree - either a TestInstance or a text string. */
+export type TestNode = TestInstance | string;
 
-/** Props object for a host element. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type HostElementProps = Record<string, any>;
-
-const instanceMap = new WeakMap<Instance | Container, HostElement>();
+const instanceMap = new WeakMap<Instance | Container, TestInstance>();
 
 /**
  * Represents a rendered host element in the test renderer tree.
  * Provides a DOM-like API for querying and inspecting rendered components.
  */
-export class HostElement {
+export class TestInstance {
   private instance: Instance | Container;
 
   private constructor(instance: Instance | Container) {
@@ -33,25 +29,26 @@ export class HostElement {
   }
 
   /** The element's props object. */
-  get props(): HostElementProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get props(): Record<string, any> {
     return this.instance.tag === Tag.Instance ? this.instance.props : {};
   }
 
   /** The parent element, or null if this is the root container. */
-  get parent(): HostElement | null {
+  get parent(): TestInstance | null {
     const parentInstance = this.instance.parent;
     if (parentInstance == null) {
       return null;
     }
 
-    return HostElement.fromInstance(parentInstance);
+    return TestInstance.fromInstance(parentInstance);
   }
 
   /** Array of child nodes (elements and text strings). Hidden children are excluded. */
-  get children(): HostNode[] {
+  get children(): TestNode[] {
     const result = this.instance.children
       .filter((child) => !child.isHidden)
-      .map((child) => getHostNodeForInstance(child));
+      .map((child) => getTestNodeForInstance(child));
     return result;
   }
 
@@ -73,8 +70,8 @@ export class HostElement {
    */
   toJSON(): JsonElement | null {
     return this.instance.tag === Tag.Container
-      ? renderContainerToJson(this.instance)
-      : renderInstanceToJson(this.instance);
+      ? containerToJson(this.instance)
+      : instanceToJson(this.instance);
   }
 
   /**
@@ -84,29 +81,32 @@ export class HostElement {
    * @param options - Optional query configuration.
    * @returns Array of matching elements.
    */
-  queryAll(predicate: (element: HostElement) => boolean, options?: QueryOptions): HostElement[] {
+  queryAll(predicate: (instance: TestInstance) => boolean, options?: QueryOptions): TestInstance[] {
     return queryAll(this, predicate, options);
   }
 
   /** @internal */
-  static fromInstance(instance: Instance | Container): HostElement {
-    const hostElement = instanceMap.get(instance);
-    if (hostElement) {
-      return hostElement;
+  static fromInstance(instance: Instance | Container): TestInstance {
+    const testInstance = instanceMap.get(instance);
+    if (testInstance) {
+      return testInstance;
     }
 
-    const result = new HostElement(instance);
+    const result = new TestInstance(instance);
     instanceMap.set(instance, result);
     return result;
   }
 }
 
-function getHostNodeForInstance(instance: Instance | TextInstance): HostNode {
+function getTestNodeForInstance(instance: Instance | TextInstance): TestNode {
   switch (instance.tag) {
     case Tag.Text:
       return instance.text;
 
     case Tag.Instance:
-      return HostElement.fromInstance(instance);
+      return TestInstance.fromInstance(instance);
   }
 }
+
+/** @deprecated `HostElement` was renamed to `TestInstance` */
+export type HostElement = TestInstance;
