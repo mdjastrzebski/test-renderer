@@ -107,3 +107,6 @@ function getTestNodeForInstance(instance: Instance | TextInstance): TestNode {
       return TestInstance.fromInstance(instance);
   }
 }
+
+/** @deprecated `HostElement` was renamed to `TestInstance` */
+export type HostElement = TestInstance;
