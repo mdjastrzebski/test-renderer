@@ -2,8 +2,9 @@ import { beforeEach, expect, jest, test } from "@jest/globals";
 import { Component, Suspense, use, useEffect, useId } from "react";
 
 import { createRoot } from "../renderer";
-import { act, renderWithAct } from "../test-utils/render";
+import { act, getRootInstance, renderWithAct } from "../test-utils/render";
 import type { JsonElement, JsonNode } from "../to-json";
+import { Props } from "../reconciler";
 
 beforeEach(() => {
   global.IS_REACT_ACT_ENVIRONMENT = true;
@@ -99,148 +100,115 @@ test("onCaughtError is called when error is caught by Error Boundary", async () 
   expect((onCaughtError.mock.calls[0]?.[0] as Error).message).toBe("Test caught error");
 });
 
-test("transformHiddenInstanceProps keeps hidden instances in children and JSON output", async () => {
-  let resolvePromise: (value: string) => void;
-  const pendingPromise = new Promise<string>((resolve) => {
+function AsyncStatus({ promise }: { promise: Promise<void> }) {
+  use(promise);
+  return <div>Content</div>;
+}
+
+const transformHiddenInstanceProps = ({ props }: { props: Props }) => ({
+  ...props,
+  "data-is-hidden": true,
+});
+
+test("without transformHiddenInstanceProps it hides instances in JSON output", async () => {
+  let resolvePromise: () => void;
+  const pendingPromise = new Promise<void>((resolve) => {
     resolvePromise = resolve;
   });
 
-  function AsyncContent({ valuePromise }: { valuePromise: Promise<string> }) {
-    const value = use(valuePromise);
-    return (
-      <div data-testid="content" style={{ opacity: 1 }}>
-        Content: {value}
+  const renderer = createRoot();
+  await renderWithAct(
+    renderer,
+    <Suspense fallback={<div>Fallback</div>}>
+      <AsyncStatus promise={Promise.resolve()} />
+    </Suspense>,
+  );
+
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Content
       </div>
-    );
-  }
-
-  const renderer = createRoot({
-    transformHiddenInstanceProps: ({ props, type }) => ({
-      ...props,
-      style: withHiddenStyle(props.style),
-      "data-hidden-instance-type": type,
-    }),
-  });
+    </>
+  `);
 
   await renderWithAct(
     renderer,
-    <Suspense fallback={<div data-testid="fallback">Loading...</div>}>
-      <AsyncContent valuePromise={Promise.resolve("Visible")} />
+    <Suspense fallback={<div>Fallback</div>}>
+      <AsyncStatus promise={pendingPromise} />
     </Suspense>,
   );
 
-  await renderWithAct(
-    renderer,
-    <Suspense fallback={<div data-testid="fallback">Loading...</div>}>
-      <AsyncContent valuePromise={pendingPromise} />
-    </Suspense>,
-  );
-
-  const contentInstances = renderer.container.queryAll(
-    (instance) => instance.props["data-testid"] === "content",
-  );
-  expect(contentInstances).toHaveLength(1);
-  expect(contentInstances[0]?.props.style).toEqual([{ opacity: 1 }, { display: "none" }]);
-  expect(contentInstances[0]?.props["data-hidden-instance-type"]).toBe("div");
-
-  const fallbackInstances = renderer.container.queryAll(
-    (instance) => instance.props["data-testid"] === "fallback",
-  );
-  expect(fallbackInstances).toHaveLength(1);
-
-  const json = renderer.container.toJSON();
-  expect(json).not.toBeNull();
-  expect(findJsonByTestId(json!, "content")).not.toBeNull();
-  expect(findJsonByTestId(json!, "fallback")).not.toBeNull();
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Fallback
+      </div>
+    </>
+  `);
 
   await act(() => {
-    resolvePromise!("Done");
+    resolvePromise!();
   });
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Content
+      </div>
+    </>
+  `);
 });
 
-test("transformHiddenInstanceProps restores original props when instance becomes visible", async () => {
-  let resolvePromise: (value: string) => void;
-  const pendingPromise = new Promise<string>((resolve) => {
+test("transformHiddenInstanceProps keeps hidden instances in JSON output", async () => {
+  let resolvePromise: () => void;
+  const pendingPromise = new Promise<void>((resolve) => {
     resolvePromise = resolve;
   });
 
-  function AsyncContent({ valuePromise }: { valuePromise: Promise<string> }) {
-    const value = use(valuePromise);
-    return (
-      <div data-testid="content" style={{ opacity: 1 }}>
-        Content: {value}
+  const renderer = createRoot({ transformHiddenInstanceProps });
+  await renderWithAct(
+    renderer,
+    <Suspense fallback={<div>Fallback</div>}>
+      <AsyncStatus promise={Promise.resolve()} />
+    </Suspense>,
+  );
+
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Content
       </div>
-    );
-  }
-
-  const renderer = createRoot({
-    transformHiddenInstanceProps: ({ props, type }) => ({
-      ...props,
-      style: withHiddenStyle(props.style),
-      "data-hidden-instance-type": type,
-    }),
-  });
+    </>
+  `);
 
   await renderWithAct(
     renderer,
-    <Suspense fallback={<div>Loading...</div>}>
-      <AsyncContent valuePromise={Promise.resolve("Visible")} />
+    <Suspense fallback={<div>Fallback</div>}>
+      <AsyncStatus promise={pendingPromise} />
     </Suspense>,
   );
 
-  await renderWithAct(
-    renderer,
-    <Suspense fallback={<div>Loading...</div>}>
-      <AsyncContent valuePromise={pendingPromise} />
-    </Suspense>,
-  );
-
-  const hiddenContent = renderer.container.queryAll(
-    (instance) => instance.props["data-testid"] === "content",
-  );
-  expect(hiddenContent).toHaveLength(1);
-  expect(hiddenContent[0]?.props.style).toEqual([{ opacity: 1 }, { display: "none" }]);
-  expect(hiddenContent[0]?.props["data-hidden-instance-type"]).toBe("div");
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div
+        data-is-hidden={true}
+      >
+        Content
+      </div>
+      <div>
+        Fallback
+      </div>
+    </>
+  `);
 
   await act(() => {
-    resolvePromise!("Done");
+    resolvePromise!();
   });
-
-  const visibleContent = renderer.container.queryAll(
-    (instance) => instance.props["data-testid"] === "content",
-  );
-  expect(visibleContent).toHaveLength(1);
-  expect(visibleContent[0]?.props.style).toEqual({ opacity: 1 });
-  expect(visibleContent[0]?.props["data-hidden-instance-type"]).toBeUndefined();
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Content
+      </div>
+    </>
+  `);
 });
-
-function withHiddenStyle(style: unknown): unknown[] {
-  if (Array.isArray(style)) {
-    return [...style, { display: "none" }];
-  }
-
-  if (style == null) {
-    return [{ display: "none" }];
-  }
-
-  return [style, { display: "none" }];
-}
-
-function findJsonByTestId(node: JsonNode, testId: string): JsonElement | null {
-  if (typeof node === "string") {
-    return null;
-  }
-
-  if (node.props["data-testid"] === testId) {
-    return node;
-  }
-
-  for (const child of node.children) {
-    const match = findJsonByTestId(child, testId);
-    if (match != null) {
-      return match;
-    }
-  }
-
-  return null;
-}
