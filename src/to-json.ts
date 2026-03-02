@@ -15,17 +15,18 @@ export type JsonElement = {
   $$typeof: symbol;
 };
 
-export function containerToJson(instance: Container): JsonElement {
+export function containerToJson(container: Container): JsonElement {
   return {
     type: CONTAINER_TYPE,
     props: {},
-    children: childrenToJson(instance.children),
+    children: childrenToJson(container.children),
     $$typeof: Symbol.for("react.test.json"),
   };
 }
 
 export function instanceToJson(instance: Instance): JsonElement | null {
-  if (instance.isHidden) {
+  const shouldExcludeHidden = instance.rootContainer.config.transformHiddenInstanceProps == null;
+  if (instance.isHidden && shouldExcludeHidden) {
     return null;
   }
 
@@ -42,7 +43,8 @@ export function instanceToJson(instance: Instance): JsonElement | null {
 }
 
 export function textInstanceToJson(instance: TextInstance): string | null {
-  if (instance.isHidden) {
+  const shouldExcludeHidden = instance.rootContainer.config.transformHiddenInstanceProps == null;
+  if (instance.isHidden && shouldExcludeHidden) {
     return null;
   }
 

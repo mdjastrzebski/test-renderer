@@ -9,11 +9,13 @@ import { formatComponentList } from "./utils";
 
 export type Type = string;
 export type Props = Record<string, unknown>;
+export type TransformHiddenInstanceProps = (input: { props: Props; type: Type }) => Props;
 
 type ReconcilerConfig = {
   textComponentTypes?: string[];
   publicTextComponentTypes?: string[];
   createNodeMock: (element: ReactElement) => object;
+  transformHiddenInstanceProps?: TransformHiddenInstanceProps;
 };
 
 export type Container = {
@@ -28,6 +30,7 @@ export type Instance = {
   tag: typeof Tag.Instance;
   type: string;
   props: Props;
+  propsBeforeHiding: Props | null;
   children: Array<Instance | TextInstance>;
   parent: Container | Instance | null;
   rootContainer: Container;
@@ -39,6 +42,7 @@ export type TextInstance = {
   tag: typeof Tag.Text;
   text: string;
   parent: Container | Instance | null;
+  rootContainer: Container;
   isHidden: boolean;
 };
 
@@ -150,6 +154,7 @@ const hostConfig: ReactReconciler.HostConfig<
       tag: Tag.Instance,
       type,
       props,
+      propsBeforeHiding: null,
       isHidden: false,
       children: [],
       parent: null,
@@ -189,6 +194,7 @@ const hostConfig: ReactReconciler.HostConfig<
       tag: Tag.Text,
       text,
       parent: null,
+      rootContainer,
       isHidden: false,
     };
   },
@@ -698,7 +704,16 @@ const hostConfig: ReactReconciler.HostConfig<
     mark("reconciler/commitUpdate", { type });
 
     instance.type = type;
-    instance.props = nextProps;
+    if (instance.isHidden && instance.rootContainer.config.transformHiddenInstanceProps != null) {
+      instance.propsBeforeHiding = nextProps;
+      instance.props = instance.rootContainer.config.transformHiddenInstanceProps({
+        props: nextProps,
+        type: instance.type,
+      });
+    } else {
+      instance.props = nextProps;
+      instance.propsBeforeHiding = null;
+    }
     instance.unstable_fiber = internalHandle;
   },
 
@@ -711,7 +726,18 @@ const hostConfig: ReactReconciler.HostConfig<
   hideInstance(instance: Instance): void {
     mark("reconciler/hideInstance", { type: instance.type });
 
+    if (instance.isHidden) {
+      return;
+    }
+
     instance.isHidden = true;
+    instance.propsBeforeHiding = instance.props;
+
+    const transformHiddenInstanceProps = instance.rootContainer.config.transformHiddenInstanceProps;
+    if (transformHiddenInstanceProps) {
+      const { props, type } = instance;
+      instance.props = transformHiddenInstanceProps({ props, type });
+    }
   },
 
   /**
@@ -734,6 +760,12 @@ const hostConfig: ReactReconciler.HostConfig<
     mark("reconciler/unhideInstance", { type: instance.type });
 
     instance.isHidden = false;
+
+    const transformHiddenInstanceProps = instance.rootContainer.config.transformHiddenInstanceProps;
+    if (transformHiddenInstanceProps && instance.propsBeforeHiding) {
+      instance.props = instance.propsBeforeHiding;
+      instance.propsBeforeHiding = null;
+    }
   },
 
   /**

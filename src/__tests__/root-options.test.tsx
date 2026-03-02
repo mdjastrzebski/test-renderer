@@ -1,8 +1,9 @@
 import { beforeEach, expect, jest, test } from "@jest/globals";
-import { Component, useEffect, useId } from "react";
+import { Component, Suspense, use, useEffect, useId } from "react";
 
+import type { Props } from "../reconciler";
 import { createRoot } from "../renderer";
-import { renderWithAct } from "../test-utils/render";
+import { act, renderWithAct } from "../test-utils/render";
 
 beforeEach(() => {
   global.IS_REACT_ACT_ENVIRONMENT = true;
@@ -96,4 +97,117 @@ test("onCaughtError is called when error is caught by Error Boundary", async () 
   expect(onCaughtError).toHaveBeenCalledTimes(1);
   expect(onCaughtError.mock.calls[0]?.[0]).toBeInstanceOf(Error);
   expect((onCaughtError.mock.calls[0]?.[0] as Error).message).toBe("Test caught error");
+});
+
+function AsyncStatus({ promise }: { promise: Promise<void> }) {
+  use(promise);
+  return <div>Content</div>;
+}
+
+const transformHiddenInstanceProps = ({ props }: { props: Props }) => ({
+  ...props,
+  "data-is-hidden": true,
+});
+
+test("without transformHiddenInstanceProps it hides instances in JSON output", async () => {
+  let resolvePromise: () => void;
+  const pendingPromise = new Promise<void>((resolve) => {
+    resolvePromise = resolve;
+  });
+
+  const renderer = createRoot();
+  await renderWithAct(
+    renderer,
+    <Suspense fallback={<div>Fallback</div>}>
+      <AsyncStatus promise={Promise.resolve()} />
+    </Suspense>,
+  );
+
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Content
+      </div>
+    </>
+  `);
+
+  await renderWithAct(
+    renderer,
+    <Suspense fallback={<div>Fallback</div>}>
+      <AsyncStatus promise={pendingPromise} />
+    </Suspense>,
+  );
+
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Fallback
+      </div>
+    </>
+  `);
+
+  await act(() => {
+    resolvePromise!();
+  });
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Content
+      </div>
+    </>
+  `);
+});
+
+test("transformHiddenInstanceProps keeps hidden instances in JSON output", async () => {
+  let resolvePromise: () => void;
+  const pendingPromise = new Promise<void>((resolve) => {
+    resolvePromise = resolve;
+  });
+
+  const renderer = createRoot({ transformHiddenInstanceProps });
+  await renderWithAct(
+    renderer,
+    <Suspense fallback={<div>Fallback</div>}>
+      <AsyncStatus promise={Promise.resolve()} />
+    </Suspense>,
+  );
+
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Content
+      </div>
+    </>
+  `);
+
+  await renderWithAct(
+    renderer,
+    <Suspense fallback={<div>Fallback</div>}>
+      <AsyncStatus promise={pendingPromise} />
+    </Suspense>,
+  );
+
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div
+        data-is-hidden={true}
+      >
+        Content
+      </div>
+      <div>
+        Fallback
+      </div>
+    </>
+  `);
+
+  await act(() => {
+    resolvePromise!();
+  });
+  expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        Content
+      </div>
+    </>
+  `);
 });
