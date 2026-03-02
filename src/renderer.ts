@@ -3,7 +3,7 @@ import { ConcurrentRoot } from "react-reconciler/constants";
 
 import { Tag } from "./constants";
 import { measureEnd, measureStart } from "./performance";
-import type { Container } from "./reconciler";
+import type { Container, TransformHiddenInstanceProps } from "./reconciler";
 import { TestReconciler } from "./reconciler";
 import { TestInstance } from "./test-instance";
 
@@ -39,6 +39,13 @@ export type RootOptions = {
 
   /** Function to create mock nodes for refs. */
   createNodeMock?: (element: ReactElement) => object;
+
+  /**
+   * Transform props when React marks a host instance as hidden (e.g. during Suspense fallback).
+   * Receives `{ props, type }` and should return a new props object.
+   * Avoid mutating the provided `props` object.
+   */
+  transformHiddenInstanceProps?: TransformHiddenInstanceProps;
 
   /** Callback called when React catches an error in an Error Boundary. Called with the error caught by the Error Boundary, and an errorInfo object containing the componentStack. */
   onCaughtError?: ErrorHandler;
@@ -94,6 +101,7 @@ export function createRoot(options?: RootOptions): Root {
       textComponentTypes: options?.textComponentTypes,
       publicTextComponentTypes: options?.publicTextComponentTypes,
       createNodeMock: options?.createNodeMock ?? defaultCreateMockNode,
+      transformHiddenInstanceProps: options?.transformHiddenInstanceProps,
     },
   };
 

@@ -44,10 +44,14 @@ export class TestInstance {
     return TestInstance.fromInstance(parentInstance);
   }
 
-  /** Array of child nodes (elements and text strings). Hidden children are excluded. */
+  /** Array of child nodes (elements and text strings). Hidden children are excluded by default. */
   get children(): TestNode[] {
+    const container =
+      this.instance.tag === Tag.Container ? this.instance : this.instance.rootContainer;
+    const shouldExcludeHiddenChildren = container.config.transformHiddenInstanceProps == null;
+
     const result = this.instance.children
-      .filter((child) => !child.isHidden)
+      .filter((child) => !child.isHidden || !shouldExcludeHiddenChildren)
       .map((child) => getTestNodeForInstance(child));
     return result;
   }
@@ -66,7 +70,7 @@ export class TestInstance {
   /**
    * Convert this element to a JSON representation suitable for snapshots.
    *
-   * @returns JSON element or null if the element is hidden.
+   * @returns JSON element or null if the element is hidden and hidden nodes are excluded.
    */
   toJSON(): JsonElement | null {
     return this.instance.tag === Tag.Container
