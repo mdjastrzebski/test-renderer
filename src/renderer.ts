@@ -12,8 +12,6 @@ import { TestInstance } from "./test-instance";
 // https://github.com/facebook/react/blob/main/packages/react-noop-renderer/src/createReactNoop.js
 // https://github.com/facebook/react/blob/main/packages/react-native-renderer/src/ReactFiberConfigFabric.js
 
-const defaultCreateMockNode = () => ({});
-
 const defaultOnUncaughtError = (error: unknown, errorInfo: ErrorInfo) => {
   console.error("Uncaught error:", error, errorInfo);
 };
@@ -36,9 +34,6 @@ export type RootOptions = {
    * Defaults to `textComponentTypes`, but you may want to override the components mentioned in the error message.
    */
   publicTextComponentTypes?: string[];
-
-  /** Function to create mock nodes for refs. */
-  createNodeMock?: (element: ReactElement) => object;
 
   /**
    * Transform props when React marks a host instance as hidden (e.g. during Suspense fallback).
@@ -100,7 +95,6 @@ export function createRoot(options?: RootOptions): Root {
     config: {
       textComponentTypes: options?.textComponentTypes,
       publicTextComponentTypes: options?.publicTextComponentTypes,
-      createNodeMock: options?.createNodeMock ?? defaultCreateMockNode,
       transformHiddenInstanceProps: options?.transformHiddenInstanceProps,
     },
   };
