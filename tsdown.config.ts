@@ -8,7 +8,9 @@ export default defineConfig({
       dts: false,
     },
   },
-  dts: true,
+  dts: {
+    sourcemap: false,
+  },
   fixedExtension: false,
   sourcemap: true,
   clean: true,
