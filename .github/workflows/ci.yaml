@@ -22,8 +22,8 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Run prettier
-        run: bun run prettier
+      - name: Run format
+        run: bun run format:check
 
       - name: Run linter
         run: bun run lint

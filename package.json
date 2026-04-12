@@ -43,9 +43,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:watch": "jest --watch",
-    "validate": "bun run typecheck && bun run test && bun run lint && bun run format",
+    "validate": "bun run typecheck && bun run test && bun run lint && bun run format:check",
     "validate:fix": "bun run format:fix && bun run lint --fix && bun run typecheck && bun run test -u",
-    "format": "prettier --check .",
+    "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
     "release": "release-it"
   },
