@@ -59,11 +59,9 @@ type HostContext = {
   config: ReconcilerConfig;
 };
 
-const nodeToInstanceMap = new WeakMap<object, Instance>();
-
-let currentUpdatePriority: number = NoEventPriority;
-
-const hostConfig: ReactReconciler.HostConfig<
+// Newer react-reconciler builds expect these event-related host config methods at runtime,
+// but the published @types/react-reconciler package may lag behind and omit them.
+type ExtendedHostConfig = ReactReconciler.HostConfig<
   Type,
   Props,
   Container,
@@ -77,7 +75,17 @@ const hostConfig: ReactReconciler.HostConfig<
   ChildSet,
   TimeoutHandle,
   NoTimeout
-> = {
+> & {
+  trackSchedulerEvent?: () => void;
+  resolveEventType?: () => null | string;
+  resolveEventTimeStamp?: () => number;
+};
+
+const nodeToInstanceMap = new WeakMap<object, Instance>();
+
+let currentUpdatePriority: number = NoEventPriority;
+
+const hostConfig: ExtendedHostConfig = {
   /**
    * The reconciler has two modes: mutation mode and persistent mode. You must specify one of them.
    *
@@ -283,6 +291,23 @@ const hostConfig: ReactReconciler.HostConfig<
     mark("reconciler/resolveUpdatePriority", { priority });
 
     return priority;
+  },
+
+  trackSchedulerEvent() {
+    mark("reconciler/trackSchedulerEvent");
+  },
+
+  resolveEventType(): null {
+    mark("reconciler/resolveEventType");
+
+    return null;
+  },
+
+  resolveEventTimeStamp(): number {
+    const timestamp = -1.1;
+    mark("reconciler/resolveEventTimeStamp", { timestamp });
+
+    return timestamp;
   },
 
   shouldAttemptEagerTransition() {

@@ -8,7 +8,7 @@ Use Bun to run repository scripts.
 - `bun run test` runs the Jest test suite.
 - `bun run test:ci` runs tests with coverage.
 - `bun run lint` runs ESLint.
-- `bun run prettier` checks formatting.
-- `bun run prettier:fix` writes formatting changes.
+- `bun run format` checks formatting.
+- `bun run format:fix` writes formatting changes.
 - `bun run validate` runs typecheck, test, lint, and formatting checks.
 - `bun run validate:fix` runs formatting and lint fixes, then typecheck and tests.

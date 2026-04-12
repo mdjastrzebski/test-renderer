@@ -6,12 +6,15 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   validate:
     name: Validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup deps
         uses: ./.github/actions/setup
@@ -19,8 +22,8 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Run prettier
-        run: bun run prettier
+      - name: Run format
+        run: bun run format:check
 
       - name: Run linter
         run: bun run lint
@@ -32,7 +35,7 @@ jobs:
         run: bun run test:ci
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -41,9 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        react-version: ["^19.0.0", "^19.1.0", "^19.2.0", "latest", "next"]
+        react-version: ["~19.0.0", "~19.1.0", "~19.2.0", "latest"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup deps
         uses: ./.github/actions/setup

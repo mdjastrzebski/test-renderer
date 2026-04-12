@@ -36,16 +36,17 @@
   ],
   "scripts": {
     "build": "tsup",
+    "check:react-release-guard": "node scripts/check-react-release-guard.mjs",
     "dev": "tsup --watch",
     "test": "jest",
     "test:ci": "jest --coverage",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:watch": "jest --watch",
-    "validate": "bun run typecheck && bun run test && bun run lint && bun run prettier",
-    "validate:fix": "bun run prettier:fix && bun run lint --fix && bun run typecheck && bun run test -u",
-    "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write .",
+    "validate": "bun run typecheck && bun run test && bun run lint && bun run format:check",
+    "validate:fix": "bun run format:fix && bun run lint --fix && bun run typecheck && bun run test -u",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
     "release": "release-it"
   },
   "dependencies": {
@@ -54,6 +55,9 @@
   },
   "peerDependencies": {
     "react": "^19.0.0"
+  },
+  "testRenderer": {
+    "supportedReactRange": ">=19.0.0 <19.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
