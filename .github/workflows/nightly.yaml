@@ -6,12 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
+
   test-react-versions:
     name: Test React ${{ matrix.react-version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        react-version: ["^19.0.0", "^19.1.0", "^19.2.0", "latest", "next"]
+        react-version: ["^19.0.0", "^19.1.0", "^19.2.0", "latest"]
     steps:
       - uses: actions/checkout@v4
 
@@ -25,4 +26,25 @@ jobs:
         run: bun run typecheck
 
       - name: Run tests
+        run: bun run test:ci
+
+  test-canary-react:
+    name: Test React Canary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup deps
+        uses: ./.github/actions/setup
+
+      - name: Install React canary
+        run: bun add -d react@next
+
+      - name: Install react-reconciler canary
+        run: bun add react-reconciler@next
+
+      - name: Build with canary dependencies
+        run: bun run build
+
+      - name: Run tests with canary dependencies
         run: bun run test:ci
