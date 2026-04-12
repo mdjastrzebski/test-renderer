@@ -56,3 +56,24 @@ jobs:
 
       - name: Run tests
         run: bun run test:ci
+
+  test-canary-react:
+    name: Test React Canary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup deps
+        uses: ./.github/actions/setup
+
+      - name: Install React canary
+        run: bun add -d react@next
+
+      - name: Install react-reconciler canary
+        run: bun add react-reconciler@next
+
+      - name: Build with canary dependencies
+        run: bun run build
+
+      - name: Run tests with canary dependencies
+        run: bun run test:ci
