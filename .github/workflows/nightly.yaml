@@ -13,7 +13,7 @@ jobs:
       matrix:
         react-version: ["^19.0.0", "^19.1.0", "^19.2.0", "latest"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup deps
         uses: ./.github/actions/setup
@@ -31,7 +31,7 @@ jobs:
     name: Test React Canary
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup deps
         uses: ./.github/actions/setup
