@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   test-react-versions:
     name: Test React ${{ matrix.react-version }}
     runs-on: ubuntu-latest
