@@ -5,7 +5,22 @@ on:
     - cron: "0 2 * * *"
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
+  react-release-guard:
+    name: Guard React Latest Support Window
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup deps
+        uses: ./.github/actions/setup
+
+      - name: Check latest React release against supported line
+        run: bun run check:react-release-guard
+
   test-react-versions:
     name: Test React ${{ matrix.react-version }}
     runs-on: ubuntu-latest

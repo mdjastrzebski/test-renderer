@@ -36,6 +36,7 @@
   ],
   "scripts": {
     "build": "tsup",
+    "check:react-release-guard": "node scripts/check-react-release-guard.mjs",
     "dev": "tsup --watch",
     "test": "jest",
     "test:ci": "jest --coverage",
