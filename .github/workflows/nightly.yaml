@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        react-version: ["^19.0.0", "^19.1.0", "^19.2.0", "latest"]
+        react-version: ["~19.0.0", "~19.1.0", "~19.2.0", "latest"]
     steps:
       - uses: actions/checkout@v5
 

@@ -1,5 +1,15 @@
 import packageJson from "../package.json" with { type: "json" };
 
+function getSupportedReactRange() {
+  const supportedReactRange = packageJson.testRenderer?.supportedReactRange;
+
+  if (typeof supportedReactRange !== "string" || supportedReactRange.trim() === "") {
+    throw new Error("package.json must define testRenderer.supportedReactRange");
+  }
+
+  return supportedReactRange;
+}
+
 function parseSemver(version) {
   const match = /^(\d+)\.(\d+)\.(\d+)(?:[-+].*)?$/.exec(version);
 
@@ -71,13 +81,11 @@ function parseExclusiveUpperBounds(range) {
   return upperBounds;
 }
 
-function getReactSupportWindow(range) {
+function getSupportedReactCeiling(range) {
   const upperBounds = parseExclusiveUpperBounds(range);
 
   if (upperBounds.length === 0) {
-    throw new Error(
-      `Could not derive a supported React ceiling from peerDependencies.react: ${range}`,
-    );
+    throw new Error(`Could not derive a supported React ceiling from range: ${range}`);
   }
 
   return upperBounds.reduce((lowest, candidate) =>
@@ -89,16 +97,16 @@ function formatSemver(version) {
   return `${version.major}.${version.minor}.${version.patch}`;
 }
 
-function getSupportedLineLabel(upperBound) {
+function getSupportedLinesLabel(upperBound) {
   if (upperBound.patch === 0 && upperBound.minor > 0) {
-    return `${upperBound.major}.${upperBound.minor - 1}.x`;
+    return `React ${upperBound.major}.0.x through ${upperBound.major}.${upperBound.minor - 1}.x`;
   }
 
   if (upperBound.minor === 0 && upperBound.patch === 0) {
-    return `${upperBound.major - 1}.x`;
+    return `React ${upperBound.major - 1}.x`;
   }
 
-  return `<${formatSemver(upperBound)}`;
+  return `React versions <${formatSemver(upperBound)}`;
 }
 
 async function getLatestReactVersion() {
@@ -130,20 +138,24 @@ async function main() {
   const latestVersion = await getLatestReactVersion();
   const parsedLatest = parseSemver(latestVersion);
   const peerRange = packageJson.peerDependencies?.react ?? "<missing>";
-  const upperBound = getReactSupportWindow(peerRange);
-  const supportedLineLabel = getSupportedLineLabel(upperBound);
+  const supportedReactRange = getSupportedReactRange();
+  const supportedReactCeiling = getSupportedReactCeiling(supportedReactRange);
+  const supportedLinesLabel = getSupportedLinesLabel(supportedReactCeiling);
 
-  if (compareSemver(parsedLatest, upperBound) < 0) {
-    console.log(`React ${latestVersion} is still within the supported line (${supportedLineLabel}).`);
+  if (compareSemver(parsedLatest, supportedReactCeiling) < 0) {
+    console.log(
+      `React ${latestVersion} is still within the supported window (${supportedLinesLabel}).`,
+    );
     return;
   }
 
   const failureLines = [
-    `React ${latestVersion} has been released on npm, but this repository only supports up to React ${supportedLineLabel}.`,
+    `React ${latestVersion} has been released on npm, but this repository currently supports only ${supportedLinesLabel}.`,
     `A plain npm install of test-renderer is no longer safely constrained for the newest React release.`,
     `Current peerDependencies.react: ${peerRange}`,
-    `Current derived React ceiling: <${formatSemver(upperBound)}`,
-    `Update the compatibility policy, add support for the new React line, and tighten the published peer dependency range before relying on latest again.`,
+    `Configured supportedReactRange: ${supportedReactRange}`,
+    `Current derived React ceiling: <${formatSemver(supportedReactCeiling)}`,
+    `Update testRenderer.supportedReactRange or tighten peerDependencies.react before relying on latest again.`,
   ];
 
   throw new Error(failureLines.join("\n"));
