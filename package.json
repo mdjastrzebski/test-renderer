@@ -3,20 +3,23 @@
   "version": "0.15.0",
   "description": "A lightweight, JavaScript-only replacement for the deprecated React Test Renderer.",
   "keywords": [
+    "jest",
     "react",
-    "react-test-renderer",
-    "testing",
-    "test-renderer",
     "react-19",
-    "jest"
+    "react-test-renderer",
+    "test-renderer",
+    "testing"
   ],
-  "author": "Maciej Jastrzebski <mdjastrzebski@gmail.com>",
+  "homepage": "https://github.com/mdjastrzebski/test-renderer",
   "license": "MIT",
+  "author": "Maciej Jastrzebski <mdjastrzebski@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/mdjastrzebski/test-renderer.git"
   },
-  "homepage": "https://github.com/mdjastrzebski/test-renderer",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -31,9 +34,6 @@
       "default": "./package.json"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsup",
     "check:react-release-guard": "node scripts/check-react-release-guard.mjs",
@@ -43,21 +43,16 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:watch": "jest --watch",
-    "validate": "bun run typecheck && bun run test && bun run lint && bun run format:check",
+    "validate": "bun run typecheck && bun run test && bun run lint && bun run format",
     "validate:fix": "bun run format:fix && bun run lint --fix && bun run typecheck && bun run test -u",
-    "format:check": "prettier --check .",
-    "format:fix": "prettier --write .",
+    "format": "oxfmt --check .",
+    "format:check": "oxfmt --check .",
+    "format:fix": "oxfmt .",
     "release": "release-it"
   },
-  "testRenderer": {
-    "supportedReactRange": ">=19.0.0 <19.3.0"
-  },
   "dependencies": {
-    "react-reconciler": "~0.31.0",
-    "@types/react-reconciler": "~0.31.0"
-  },
-  "peerDependencies": {
-    "react": "^19.0.0"
+    "@types/react-reconciler": "~0.31.0",
+    "react-reconciler": "~0.31.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -69,12 +64,18 @@
     "eslint": "^10.2.0",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "jest": "^30.3.0",
-    "prettier": "^3.8.2",
+    "oxfmt": "^0.44.0",
     "react": "^19.2.5",
     "release-it": "^19.2.4",
     "ts-jest": "^29.4.9",
     "tsup": "^8.5.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.1"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "testRenderer": {
+    "supportedReactRange": ">=19.0.0 <19.3.0"
   }
 }
