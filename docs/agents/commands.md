@@ -2,7 +2,7 @@
 
 Use Bun to run repository scripts.
 
-- `bun run build` builds the package with `tsup` into `dist/`.
+- `bun run build` builds the package with `tsdown` into `dist/`.
 - `bun run dev` runs the build in watch mode.
 - `bun run typecheck` runs `tsc --noEmit`.
 - `bun run test` runs the Jest test suite.

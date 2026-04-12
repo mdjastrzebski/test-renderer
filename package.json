@@ -35,9 +35,9 @@
     }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "check:react-release-guard": "node scripts/check-react-release-guard.mjs",
-    "dev": "tsup --watch",
+    "dev": "tsdown --watch",
     "test": "jest",
     "test:ci": "jest --coverage",
     "lint": "eslint .",
@@ -68,7 +68,7 @@
     "react": "^19.2.5",
     "release-it": "^19.2.4",
     "ts-jest": "^29.4.9",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.21.7",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.1"
   },

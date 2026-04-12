@@ -11,7 +11,6 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "types": ["jest", "node"],
-    "ignoreDeprecations": "6.0",
     "stripInternal": true,
     "skipLibCheck": true
   },
