@@ -3,7 +3,7 @@
     "noEmit": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "lib": ["dom", "es2017"],
+    "lib": ["es2017"],
     "target": "es2016",
     "module": "commonjs",
     "jsx": "react-jsx",
