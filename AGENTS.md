@@ -18,3 +18,9 @@ Project docs:
 - [Development Conventions](./docs/agents/development-conventions.md)
 - [Commands](./docs/agents/commands.md)
 - [Versioning](./docs/versioning.md)
+
+PR draft workflow:
+
+- Maintain `PR.txt` at the repository root using the structure from `.github/pull_request_template.md`.
+- Keep `PR.txt` aligned with the current branch diff relative to `origin/main`, including tests actually run and any known validation gaps.
+- Do not commit `PR.txt`.
