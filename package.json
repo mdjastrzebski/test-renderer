@@ -49,6 +49,9 @@
     "format:fix": "prettier --write .",
     "release": "release-it"
   },
+  "testRenderer": {
+    "supportedReactRange": ">=19.0.0 <19.3.0"
+  },
   "dependencies": {
     "react-reconciler": "~0.31.0",
     "@types/react-reconciler": "~0.31.0"
@@ -56,24 +59,21 @@
   "peerDependencies": {
     "react": "^19.0.0"
   },
-  "testRenderer": {
-    "supportedReactRange": ">=19.0.0 <19.3.0"
-  },
   "devDependencies": {
-    "@eslint/js": "^9.21.0",
-    "@jest/globals": "^30.2.0",
-    "@release-it/conventional-changelog": "^10.0.0",
+    "@eslint/js": "^10.0.1",
+    "@jest/globals": "^30.3.0",
+    "@release-it/conventional-changelog": "^10.0.6",
     "@types/jest": "^30.0.0",
-    "@types/react": "^19.0.10",
-    "eslint": "^9.21.0",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "jest": "^30.2.0",
-    "prettier": "^3.5.2",
+    "@types/react": "^19.2.14",
+    "eslint": "^10.2.0",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "jest": "^30.3.0",
+    "prettier": "^3.8.2",
     "react": "^19.0.0",
-    "release-it": "^18.1.2",
-    "ts-jest": "^29.2.6",
-    "tsup": "^8.4.0",
-    "typescript": "~5.7.3",
-    "typescript-eslint": "^8.25.0"
+    "release-it": "^19.2.4",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.5.1",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.58.1"
   }
 }
