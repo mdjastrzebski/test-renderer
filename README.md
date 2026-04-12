@@ -6,6 +6,8 @@ This library is used by [React Native Testing Library](https://github.com/callst
 
 This library replaces the deprecated React Test Renderer. It uses [React Reconciler](https://github.com/facebook/react/tree/main/packages/react-reconciler) to build a custom renderer that operates on host elements by default, and provides escape hatches for complex use-cases. Most React Reconciler options are exposed through `RootOptions`.
 
+For release and compatibility policy, see [docs/versioning.md](./docs/versioning.md).
+
 ## Installation
 
 ```bash

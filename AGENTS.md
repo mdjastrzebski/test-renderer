@@ -47,6 +47,7 @@ The project uses **Bun** for development scripts, but you can install it via npm
 - **Testing:** Unit tests are located in `src/__tests__/`. Tests use `jest` and `ts-jest`.
 - **Linting:** ESLint is used for static analysis.
 - **Git:** Commits seem to follow standard conventions (implied by `release-it`).
+- **Versioning:** See `docs/versioning.md` for the `1.x` compatibility-line policy for React / React Reconciler support.
 
 ## Directory Structure
 
