@@ -208,22 +208,20 @@ test("container with fragment", async () => {
   `);
 });
 
-test("rejects rendering null at the root", async () => {
+test.each([
+  ["null", null, "null"],
+  ["string", "hello", "a string"],
+  ["number", 42, "a number"],
+  ["boolean", false, "a boolean"],
+  ["undefined", undefined, "undefined"],
+  ["array", [<div key="1">Hello</div>], "an array"],
+  ["plain object", { type: "div" }, "a object"],
+])("rejects rendering a %s at the root", async (_label, input, formattedValue) => {
   const renderer = createRoot();
 
   await expect(() =>
-    renderWithAct(renderer, null as unknown as React.ReactElement),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"root.render(...) expects a React element. Fragments are supported, but received null."`,
-  );
-});
-
-test("rejects rendering a string at the root", async () => {
-  const renderer = createRoot();
-
-  await expect(() =>
-    renderWithAct(renderer, "hello" as unknown as React.ReactElement),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"root.render(...) expects a React element. Fragments are supported, but received a string."`,
+    renderWithAct(renderer, input as unknown as React.ReactElement),
+  ).rejects.toThrow(
+    `root.render(...) expects a React element. Fragments are supported, but received ${formattedValue}.`,
   );
 });
