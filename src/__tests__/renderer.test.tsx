@@ -207,3 +207,23 @@ test("container with fragment", async () => {
     </>
   `);
 });
+
+test("rejects rendering null at the root", async () => {
+  const renderer = createRoot();
+
+  await expect(() =>
+    renderWithAct(renderer, null as unknown as React.ReactElement),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"root.render(...) expects a React element. Fragments are supported, but received null."`,
+  );
+});
+
+test("rejects rendering a string at the root", async () => {
+  const renderer = createRoot();
+
+  await expect(() =>
+    renderWithAct(renderer, "hello" as unknown as React.ReactElement),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `"root.render(...) expects a React element. Fragments are supported, but received a string."`,
+  );
+});
