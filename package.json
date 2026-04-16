@@ -1,6 +1,6 @@
 {
   "name": "test-renderer",
-  "version": "0.16.0",
+  "version": "1.0.0",
   "description": "A lightweight test renderer for React and a modern replacement for the deprecated React Test Renderer.",
   "keywords": [
     "jest",
