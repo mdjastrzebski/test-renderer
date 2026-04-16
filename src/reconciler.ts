@@ -5,6 +5,7 @@ import { DefaultEventPriority, NoEventPriority } from "react-reconciler/constant
 import { Tag } from "./constants";
 import { mark, measureEnd, measureStart } from "./performance";
 import { TestInstance } from "./test-instance";
+import { REACT_CONTEXT_TYPE } from "./test-utils/react-constants";
 import { formatComponentList } from "./utils";
 
 export type Type = string;
@@ -37,6 +38,8 @@ export type Instance = {
   unstable_fiber: Fiber;
 };
 
+export type FormInstance = Instance;
+
 export type TextInstance = {
   tag: typeof Tag.Text;
   text: string;
@@ -46,12 +49,13 @@ export type TextInstance = {
 };
 
 export type SuspenseInstance = object;
+export type SuspendedState = unknown;
 export type HydratableInstance = object;
 export type PublicInstance = object | null;
-export type UpdatePayload = unknown;
 export type ChildSet = unknown;
 export type TimeoutHandle = unknown;
 export type NoTimeout = unknown;
+export type TransitionStatus = unknown;
 
 type HostContext = {
   type: string;
@@ -59,8 +63,6 @@ type HostContext = {
   config: ReconcilerConfig;
 };
 
-// Newer react-reconciler builds expect these event-related host config methods at runtime,
-// but the published @types/react-reconciler package may lag behind and omit them.
 type ExtendedHostConfig = ReactReconciler.HostConfig<
   Type,
   Props,
@@ -69,17 +71,14 @@ type ExtendedHostConfig = ReactReconciler.HostConfig<
   TextInstance,
   SuspenseInstance,
   HydratableInstance,
+  FormInstance,
   PublicInstance,
   HostContext,
-  UpdatePayload,
   ChildSet,
   TimeoutHandle,
-  NoTimeout
-> & {
-  trackSchedulerEvent?: () => void;
-  resolveEventType?: () => null | string;
-  resolveEventTimeStamp?: () => number;
-};
+  NoTimeout,
+  TransitionStatus
+>;
 
 const nodeToInstanceMap = new WeakMap<object, Instance>();
 
@@ -709,8 +708,6 @@ const hostConfig: ExtendedHostConfig = {
    *  be aware that it may change significantly between versions. You're taking on additional maintenance risk by
    * reading from it, and giving up all guarantees if you write something to it.
    */
-  // @ts-expect-error @types/react-reconciler types don't fully match react-reconciler's actual Flow types.
-  // Correctness is verified through tests.
   commitUpdate(
     instance: Instance,
     type: Type,
@@ -856,7 +853,7 @@ const hostConfig: ExtendedHostConfig = {
   },
 
   /**
-   * #### `waitForCommitToBeReady()`
+   * #### `waitForCommitToBeReady(state, timeoutOffset)`
    *
    * This method is called after all `suspendInstance` calls are complete.
    *
@@ -865,8 +862,8 @@ const hostConfig: ExtendedHostConfig = {
    * callback will initiate the commit when called. The return value is a cancellation function that the
    * Reconciler can use to abort the commit.
    */
-  waitForCommitToBeReady(type: Type, _props: Props) {
-    mark("reconciler/waitForCommitToBeReady", { type });
+  waitForCommitToBeReady(_state?: SuspendedState, _timeoutOffset?: number) {
+    mark("reconciler/waitForCommitToBeReady");
 
     return null;
   },
@@ -884,6 +881,14 @@ const hostConfig: ExtendedHostConfig = {
   supportsHydration: false,
 
   NotPendingTransition: null,
+  HostTransitionContext: {
+    $$typeof: REACT_CONTEXT_TYPE,
+    Provider: null as unknown as ReactReconciler.ReactProviderType<TransitionStatus>,
+    Consumer: null as unknown as ReactReconciler.ReactContext<TransitionStatus>,
+    _currentValue: null,
+    _currentValue2: null,
+    _threadCount: 0,
+  } as ReactReconciler.ReactContext<TransitionStatus>,
 
   resetFormInstance(_form: Instance) {
     mark("reconciler/resetFormInstance");
