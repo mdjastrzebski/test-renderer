@@ -127,7 +127,7 @@ To make this work well, the consumer package should either:
 
 ## Dist Tags
 
-For direct `test-renderer` consumers, publish dist tags for each compatibility line:
+When multiple `1.x` compatibility lines are live, direct `test-renderer` consumers should get line-specific dist tags:
 
 - `latest` -> newest supported line, typically the highest React 19 line
 - `react19.0` -> latest `1.0.x`
@@ -135,6 +135,8 @@ For direct `test-renderer` consumers, publish dist tags for each compatibility l
 - `react19.2` -> latest `1.2.x`
 
 This keeps `npm` install flows predictable for users who consume `test-renderer` directly.
+
+During the initial rollout, `latest` may temporarily point at `1.0.x` before higher React 19 compatibility lines are published. Dist tags become more useful once there is more than one active `1.x` line.
 
 ## Summary
 

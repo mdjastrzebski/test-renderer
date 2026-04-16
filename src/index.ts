@@ -1,9 +1,7 @@
 export { createRoot } from "./renderer";
 
 export type { Root, RootOptions } from "./renderer";
-
-// eslint-disable-next-line @typescript-eslint/no-deprecated
-export type { TestInstance, TestNode, HostElement } from "./test-instance";
+export type { TestInstance, TestNode } from "./test-instance";
 export type { JsonElement, JsonNode } from "./to-json";
 export type { QueryOptions } from "./query-all";
 

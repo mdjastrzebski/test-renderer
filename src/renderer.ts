@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import { isValidElement, type ReactElement } from "react";
 import { ConcurrentRoot } from "react-reconciler/constants";
 
 import { Tag } from "./constants";
@@ -127,10 +127,13 @@ export function createRoot(options?: RootOptions): Root {
     }
 
     measureStart("render");
+    let elementType = "<invalid>";
     try {
+      assertValidRootElement(element);
+      elementType = String(element.type);
       TestReconciler.updateContainer(element, containerFiber, null, null);
     } finally {
-      measureEnd("render", { elementType: String(element.type) });
+      measureEnd("render", { elementType });
     }
   };
 
@@ -161,4 +164,39 @@ export function createRoot(options?: RootOptions): Root {
       return TestInstance.fromInstance(container);
     },
   };
+}
+
+function assertValidRootElement(element: ReactElement): void {
+  if (isValidElement(element)) {
+    return;
+  }
+
+  throw new Error(
+    `root.render(...) expects a React element. Fragments are supported, but received ${formatInvalidRootValue(
+      element,
+    )}.`,
+  );
+}
+
+function formatInvalidRootValue(value: unknown): string {
+  if (value === null) {
+    return "null";
+  }
+
+  if (Array.isArray(value)) {
+    return "an array";
+  }
+
+  switch (typeof value) {
+    case "string":
+      return "a string";
+    case "number":
+      return "a number";
+    case "boolean":
+      return "a boolean";
+    case "undefined":
+      return "undefined";
+    default:
+      return `a ${typeof value}`;
+  }
 }
