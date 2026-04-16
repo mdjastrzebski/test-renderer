@@ -7,6 +7,9 @@ dist/
 # Test coverage
 coverage/
 
+# Local workflow notes
+PR.md
+
 # IDEs and editors
 .vscode/
 

@@ -21,6 +21,9 @@ Project docs:
 
 PR draft workflow:
 
-- Maintain `PR.txt` at the repository root using the structure from `.github/pull_request_template.md`.
-- Keep `PR.txt` aligned with the current branch diff relative to `origin/main`, including tests actually run and any known validation gaps.
-- Do not commit `PR.txt`.
+- Keep `PR.md` at the repository root aligned with the current branch diff relative to `origin/main`, using the structure from `.github/pull_request_template.md`.
+- Do not commit or mention `PR.md` in the pull request description.
+
+Release workflow:
+
+- Always update `CHANGELOG.md` before cutting a release.
