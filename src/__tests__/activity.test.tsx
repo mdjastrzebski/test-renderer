@@ -57,23 +57,25 @@ testGateReact19_2("Activity hides content while preserving child state", async (
   `);
 });
 
-testGateReact19_2("Activity keeps hidden instances in output with transformHiddenInstanceProps", async () => {
-  function Pane() {
-    return <div>Content</div>;
-  }
+testGateReact19_2(
+  "Activity keeps hidden instances in output with transformHiddenInstanceProps",
+  async () => {
+    function Pane() {
+      return <div>Content</div>;
+    }
 
-  function App({ mode }: { mode: "hidden" | "visible" }) {
-    return (
-      <Activity mode={mode}>
-        <Pane />
-      </Activity>
-    );
-  }
+    function App({ mode }: { mode: "hidden" | "visible" }) {
+      return (
+        <Activity mode={mode}>
+          <Pane />
+        </Activity>
+      );
+    }
 
-  const renderer = createRoot({ transformHiddenInstanceProps });
+    const renderer = createRoot({ transformHiddenInstanceProps });
 
-  await renderWithAct(renderer, <App mode="visible" />);
-  expect(renderer.container).toMatchInlineSnapshot(`
+    await renderWithAct(renderer, <App mode="visible" />);
+    expect(renderer.container).toMatchInlineSnapshot(`
     <>
       <div>
         Content
@@ -81,8 +83,8 @@ testGateReact19_2("Activity keeps hidden instances in output with transformHidde
     </>
   `);
 
-  await renderWithAct(renderer, <App mode="hidden" />);
-  expect(renderer.container).toMatchInlineSnapshot(`
+    await renderWithAct(renderer, <App mode="hidden" />);
+    expect(renderer.container).toMatchInlineSnapshot(`
     <>
       <div
         data-is-hidden={true}
@@ -92,12 +94,13 @@ testGateReact19_2("Activity keeps hidden instances in output with transformHidde
     </>
   `);
 
-  await renderWithAct(renderer, <App mode="visible" />);
-  expect(renderer.container).toMatchInlineSnapshot(`
+    await renderWithAct(renderer, <App mode="visible" />);
+    expect(renderer.container).toMatchInlineSnapshot(`
     <>
       <div>
         Content
       </div>
     </>
   `);
-});
+  },
+);
