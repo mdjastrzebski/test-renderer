@@ -115,7 +115,6 @@ export function createRoot(options?: RootOptions): Root {
     options?.onCaughtError ?? defaultOnCaughtError,
     options?.onRecoverableError ?? defaultOnRecoverableError,
     defaultOnDefaultTransitionIndicator,
-    null, // transitionCallbacks
   );
 
   measureEnd("createRoot");
