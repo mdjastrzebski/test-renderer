@@ -40,16 +40,15 @@ test("renders a component", async () => {
 
 ## React 19 Compatibility Lines
 
-Starting with `1.x`, `test-renderer` follows React 19 compatibility lines instead of trying to stretch one package release across every React 19 minor.
+Starting with `1.x`, `test-renderer` tracks preferred React 19 compatibility lines while keeping a broad React 19 peer range so installs do not get blocked between React minor releases.
 
-- `1.0.x` targets the React `19.0` line on `react-reconciler ~0.31.0`
-  Example React features on this line include Actions, `useActionState`, `useOptimistic`, and `use`
-- `1.1.x` is planned to target the React `19.1` line on `react-reconciler ~0.32.0`
-  Example additions on this line include Owner Stack support and the CSS-selector-safe `useId()` format
-- `1.2.x` is planned to target the React `19.2` line on `react-reconciler ~0.33.0`
-  Example additions on this line include `<Activity />` and `useEffectEvent`
+| `test-renderer` version | `react` version | `react-reconciler` version | Notable React features                                  |
+| ----------------------- | --------------- | -------------------------- | ------------------------------------------------------- |
+| `1.0.x`                 | `19.0`          | `~0.31.0`                  | Actions, `useActionState`, `useOptimistic`, `use`       |
+| `1.1.x`                 | `19.1`          | `~0.32.0`                  | Owner Stack support, CSS-selector-safe `useId()` format |
+| `1.2.x`                 | `19.2`          | `~0.33.0`                  | `<Activity />`, `useEffectEvent`                        |
 
-These examples are illustrative, not exhaustive. The authoritative compatibility contract is the React / `react-reconciler` line for each `1.x` release.
+These examples are illustrative, not exhaustive. New React-minor-specific support lands on the matching preferred React / `react-reconciler` line for each `1.x` release, even though the package publishes a broad React 19 peer range.
 
 ## Test Output Tree
 
