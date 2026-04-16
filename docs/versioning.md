@@ -138,7 +138,7 @@ When multiple `1.x` compatibility lines are live, direct `test-renderer` consume
 
 This keeps `npm` install flows predictable for users who consume `test-renderer` directly.
 
-During the initial rollout, `latest` may temporarily point at `1.0.x` before higher React 19 compatibility lines are published. Dist tags become more useful once there is more than one active `1.x` line.
+During the rollout to later React 19 lines, `latest` may temporarily lag the highest planned compatibility line. Dist tags become more useful once there is more than one active `1.x` line.
 
 ## Summary
 
@@ -146,7 +146,7 @@ The recommended `test-renderer` 1.x scheme is:
 
 - `1.0.x` for React `19.0`
 - `1.1.x` for React `19.1`
-- `1.2.x` for React `19.2`
+- `1.2.x` for React `19.2` when that line is published
 
 With this scheme:
 

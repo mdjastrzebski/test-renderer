@@ -12,3 +12,6 @@ export const DiscreteEventPriority = 2;
 export const ContinuousEventPriority = 8;
 export const DefaultEventPriority = 32;
 export const IdleEventPriority = 0b0010000000000000000000000000000;
+
+// Source: https://github.com/facebook/react/blob/v19.1.0/packages/shared/ReactSymbols.js
+export const REACT_CONTEXT_TYPE = Symbol.for("react.context");

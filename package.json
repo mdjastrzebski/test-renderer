@@ -51,8 +51,8 @@
     "release": "release-it"
   },
   "dependencies": {
-    "@types/react-reconciler": "~0.31.0",
-    "react-reconciler": "~0.31.0"
+    "@types/react-reconciler": "~0.32.0",
+    "react-reconciler": "~0.32.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

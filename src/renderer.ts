@@ -21,6 +21,7 @@ const defaultOnCaughtError = (error: unknown, errorInfo: ErrorInfo) => {
 const defaultOnRecoverableError = (error: unknown, errorInfo: ErrorInfo) => {
   console.error("Recoverable error:", error, errorInfo);
 };
+const defaultOnDefaultTransitionIndicator = () => {};
 
 /**
  * Options for configuring the test renderer root.
@@ -63,7 +64,7 @@ export type ErrorHandler = (error: unknown, errorInfo: ErrorInfo) => void;
 
 /** Error information provided to error handlers. */
 export type ErrorInfo = {
-  componentStack: string;
+  componentStack?: string;
 };
 
 /**
@@ -112,10 +113,8 @@ export function createRoot(options?: RootOptions): Root {
     options?.identifierPrefix ?? "",
     options?.onUncaughtError ?? defaultOnUncaughtError,
     options?.onCaughtError ?? defaultOnCaughtError,
-    // @ts-expect-error @types/react-reconciler types don't include onRecoverableError parameter
-    // in the createContainer signature, but react-reconciler's actual Flow types do.
-    // Correctness is verified through tests.
     options?.onRecoverableError ?? defaultOnRecoverableError,
+    defaultOnDefaultTransitionIndicator,
     null, // transitionCallbacks
   );
 
