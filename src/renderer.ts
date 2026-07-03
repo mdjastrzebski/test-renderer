@@ -129,7 +129,14 @@ export function createRoot(options?: RootOptions): Root {
     try {
       assertValidRootElement(element);
       elementType = String(element.type);
-      TestReconciler.updateContainer(element, containerFiber, null, null);
+      // Render at Sync lane and flush immediately, rather than scheduling a
+      // Default-lane update that only commits when React's outermost `act()`
+      // flushes its work queue. A single not-yet-settled `act()` elsewhere in the
+      // run (RNTL's afterEach cleanup unmount, a timer wrapped in `act()`, ...)
+      // leaves `actScopeDepth > 0`, making every later render's `act()` nested and
+      // non-flushing — which committed an empty tree. See render-nested-act.test.
+      TestReconciler.updateContainerSync(element, containerFiber, null, null);
+      TestReconciler.flushSyncWork();
     } finally {
       measureEnd("render", { elementType });
     }
@@ -142,7 +149,11 @@ export function createRoot(options?: RootOptions): Root {
 
     measureStart("unmount");
     try {
-      TestReconciler.updateContainer(null, containerFiber, null, null);
+      // Unmount synchronously for the same reason `render` does — so cleanup
+      // actually tears the tree down within the call instead of leaving a
+      // Default-lane update pending on an act scope that may never flush.
+      TestReconciler.updateContainerSync(null, containerFiber, null, null);
+      TestReconciler.flushSyncWork();
     } finally {
       measureEnd("unmount");
     }
