@@ -1,0 +1,3 @@
+[submodule "references/react"]
+	path = references/react
+	url = https://github.com/react/react.git
