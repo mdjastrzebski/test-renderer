@@ -1,0 +1,105 @@
+# Testing Timers & Async Code
+
+When a component updates state asynchronously — after a network call, a `setTimeout`, or a promise — you need to let those updates settle **inside `act()`** before asserting. This guide shows the recommended patterns and the pitfalls to avoid.
+
+## The golden rule
+
+Wrap every update in an `act()` call that you **`await`**, and keep each `act()` scope small:
+
+```tsx
+await act(async () => {
+  // trigger and let updates resolve
+});
+// assert here, after act has settled
+```
+
+An `act()` scope that is never awaited stays open. Because React tracks act scopes globally, a leaked scope silently swallows the updates of **later** renders and effects in the same test file — the classic "only the first test renders" symptom. Always `await`, always assert *after* the `act` closes.
+
+## Resolving a mocked network call
+
+The cleanest approach controls resolution explicitly with a deferred promise — no timing, no guessing:
+
+```tsx
+import { createRoot } from "test-renderer";
+import { act } from "react";
+
+test("shows the user after fetch resolves", async () => {
+  let resolve!: (user: { name: string }) => void;
+  const fetchUser = jest.fn(() => new Promise((r) => { resolve = r; }));
+
+  const renderer = createRoot();
+  await act(async () => {
+    renderer.render(<Profile fetchUser={fetchUser} />);
+  });
+  // loading state is visible here
+
+  await act(async () => {
+    resolve({ name: "Ada" }); // you decide exactly when
+  });
+  // resolved state is visible here
+});
+```
+
+Keep `act` out of the mock itself — the mock should emulate the real dependency (which has no `act`). The `act` belongs in the test, at the point you let the update happen.
+
+## Fake timers
+
+With `jest.useFakeTimers()`, advance the clock **inside** an async `act`. Prefer flushing all pending timers over advancing by a hand-picked number:
+
+```tsx
+test("fires the timeout", async () => {
+  jest.useFakeTimers();
+
+  const renderer = createRoot();
+  await act(async () => {
+    renderer.render(<DelayedMessage />);
+  });
+
+  await act(async () => {
+    await jest.runAllTimersAsync(); // fires timers *and* flushes microtasks
+  });
+  // message is visible here
+
+  jest.useRealTimers();
+});
+```
+
+Use the `*Async` timer helpers (`runAllTimersAsync`, `advanceTimersByTimeAsync`) — they interleave the microtask turns that promise chains depend on. The plain synchronous variants fire timers but won't let awaited promises resolve.
+
+## Real timers with `sleep`
+
+If your mock delays with a real `sleep(ms)`, keep the act scope open across the delay:
+
+```tsx
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+await act(async () => {
+  await sleep(delay); // real time passes; promise chain settles on close
+});
+```
+
+> Avoid picking a "magic" wait value that must exceed the mock's internal delay — that couples your test to the mock's timing. Prefer a deferred promise or fake timers instead.
+
+## Flushing pending work
+
+An empty, awaited `act` is a convenient flush point for already-scheduled microtasks and effects:
+
+```tsx
+await act(async () => {});
+```
+
+## Do & Don't
+
+✅ **Do**
+
+- `await` every `act()` call.
+- Use `act(async () => …)` (async form) whenever a promise or microtask is involved.
+- Keep each `act` scope small and assert **after** it closes.
+- Drive fake timers with the `*Async` helpers, inside `act`.
+
+❌ **Don't**
+
+- Fire-and-forget an `act(async () => …)` without awaiting it — this leaks the scope.
+- Put `act()` inside a mock, a component, or a timer patch — it's a test-only boundary.
+- Wrap an entire test in one large `act` — prefer several small, scoped ones.
+- Match a real `sleep` wait to the mock's internal delay — remove the timing dependency instead.
