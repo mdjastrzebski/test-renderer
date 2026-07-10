@@ -13,7 +13,7 @@ await act(async () => {
 // assert here, after act has settled
 ```
 
-An `act()` scope that is never awaited stays open. Because React tracks act scopes globally, a leaked scope silently swallows the updates of **later** renders and effects in the same test file — the classic "only the first test renders" symptom. Always `await`, always assert *after* the `act` closes.
+An `act()` scope that is never awaited stays open. Because React tracks act scopes globally, a leaked scope can silently swallow updates from **later** renders and effects in the same test file. A common sign of this is a test that renders nothing while earlier tests in the file pass. To avoid it, always `await`, and always assert *after* the `act` closes.
 
 ## Resolving a mocked network call
 
