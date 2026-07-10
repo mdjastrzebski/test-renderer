@@ -11,9 +11,9 @@ Relevant source layout:
 - `src/test-utils/` contains helpers used by project tests.
 - `dist/` contains generated build output.
 
-## React reference source
+## Reference sources
 
-- `references/react/` is a git submodule pinned to the upstream React repository (`https://github.com/react/react.git`).
-- Agents have read access to it as the authoritative source for React and `react-reconciler` internals.
-- Use it to cross-validate renderer behavior against React itself — host-config contracts, reconciler semantics, lifecycle timing, and expected output shapes — rather than relying on assumptions.
-- Populate it with `git submodule update --init references/react` if the directory is empty.
+Read-only git submodules for cross-validating renderer behavior against real code instead of assumptions. Populate with `git submodule update --init <path>` if empty.
+
+- `references/react/` — upstream React (`react/react`); authoritative source for React and `react-reconciler` internals.
+- `references/react-native-testing-library/` — upstream RNTL (`callstack/react-native-testing-library`); example of a real consumer building testing utilities on a renderer.

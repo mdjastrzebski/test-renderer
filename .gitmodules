@@ -1,3 +1,6 @@
 [submodule "references/react"]
 	path = references/react
 	url = https://github.com/react/react.git
+[submodule "references/react-native-testing-library"]
+	path = references/react-native-testing-library
+	url = https://github.com/callstack/react-native-testing-library.git
