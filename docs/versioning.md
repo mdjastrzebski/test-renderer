@@ -29,23 +29,15 @@ In practice, each `1.x` minor corresponds to a specific React / RR line, while `
 
 ## Compatibility Lines
 
-### `1.0.x`
+Starting with `1.x`, `test-renderer` tracks preferred React 19 compatibility lines while keeping a broad React 19 peer range so installs do not get blocked between React minor releases.
 
-- `react-reconciler`: `~0.31.0`
-- preferred React line: `19.0`
-- `peerDependencies.react`: `^19.0.0`
+| `test-renderer` version | `react` version | `react-reconciler` version | `peerDependencies.react` | Notable React features                                  |
+| ----------------------- | --------------- | -------------------------- | ------------------------ | ------------------------------------------------------- |
+| `1.0.x`                 | `19.0`          | `~0.31.0`                  | `^19.0.0`                | Actions, `useActionState`, `useOptimistic`, `use`       |
+| `1.1.x`                 | `19.1`          | `~0.32.0`                  | `^19.0.0`                | Owner Stack support, CSS-selector-safe `useId()` format |
+| `1.2.x`                 | `19.2`          | `~0.33.0`                  | `^19.0.0`                | `<Activity />`, `useEffectEvent`                        |
 
-### `1.1.x`
-
-- `react-reconciler`: `~0.32.0`
-- preferred React line: `19.1`
-- `peerDependencies.react`: `^19.0.0`
-
-### `1.2.x`
-
-- `react-reconciler`: `~0.33.0`
-- preferred React line: `19.2`
-- `peerDependencies.react`: `^19.0.0`
+These feature examples are illustrative, not exhaustive. The `1.0.x`, `1.1.x`, and `1.2.x` lines are current compatibility lines. New React-minor-specific support lands on the matching preferred React / `react-reconciler` line for each `1.x` release, even though the package publishes a broad React 19 peer range.
 
 ## Release Rules
 

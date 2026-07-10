@@ -3,5 +3,6 @@ export default {
   testEnvironment: "node",
   testMatch: ["**/__tests__/**/*.ts?(x)", "**/?(*.)+(spec|test).ts?(x)"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  coveragePathIgnorePatterns: ["/node_modules/", "/test-utils/"],
+  testPathIgnorePatterns: ["/node_modules/", "/references/"],
+  coveragePathIgnorePatterns: ["/node_modules/", "/references/", "/test-utils/"],
 };

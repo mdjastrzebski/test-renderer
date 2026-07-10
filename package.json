@@ -43,11 +43,10 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:watch": "jest --watch",
-    "validate": "bun run typecheck && bun run test && bun run lint && bun run format",
-    "validate:fix": "bun run format:fix && bun run lint --fix && bun run typecheck && bun run test -u",
-    "format": "oxfmt --check .",
+    "validate": "bun run typecheck && bun run test && bun run lint && bun run format:check",
+    "validate:fix": "bun run format && bun run lint --fix && bun run typecheck && bun run test -u",
+    "format": "oxfmt .",
     "format:check": "oxfmt --check .",
-    "format:fix": "oxfmt .",
     "release": "release-it"
   },
   "dependencies": {
