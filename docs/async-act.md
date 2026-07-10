@@ -13,7 +13,7 @@ await act(async () => {
 // assert here, after act has settled
 ```
 
-An `act()` scope that is never awaited stays open. Because React tracks act scopes globally, a leaked scope can silently swallow updates from **later** renders and effects in the same test file. A common sign of this is a test that renders nothing while earlier tests in the file pass. To avoid it, always `await`, and always assert *after* the `act` closes.
+An `act()` scope that is never awaited stays open. Because React tracks act scopes globally, a leaked scope can silently swallow updates from **later** renders and effects in the same test file. A common sign of this is a test that renders nothing while earlier tests in the file pass. To avoid it, always `await`, and always assert _after_ the `act` closes.
 
 ## Resolving a mocked network call
 
@@ -25,7 +25,12 @@ import { act } from "react";
 
 test("shows the user after fetch resolves", async () => {
   let resolve!: (user: { name: string }) => void;
-  const fetchUser = jest.fn(() => new Promise((r) => { resolve = r; }));
+  const fetchUser = jest.fn(
+    () =>
+      new Promise((r) => {
+        resolve = r;
+      }),
+  );
 
   const renderer = createRoot();
   await act(async () => {
