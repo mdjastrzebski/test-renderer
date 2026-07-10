@@ -1,6 +1,6 @@
 # Testing Async Code with `act`
 
-When a component updates state asynchronously — after a network call, a `setTimeout`, or a promise — you need to let those updates settle **inside `act()`** before asserting. This guide shows the recommended patterns and the pitfalls to avoid.
+When a component updates state asynchronously (after a network call, a `setTimeout`, or a promise), you need to let those updates settle **inside `act()`** before asserting. This guide shows the recommended patterns and the pitfalls to avoid.
 
 ## The golden rule
 
@@ -17,7 +17,7 @@ An `act()` scope that is never awaited stays open. Because React tracks act scop
 
 ## Resolving a mocked network call
 
-The cleanest approach controls resolution explicitly with a deferred promise — no timing, no guessing:
+The cleanest approach controls resolution explicitly with a deferred promise, so there is no timing to guess:
 
 ```tsx
 import { createRoot } from "test-renderer";
@@ -40,7 +40,7 @@ test("shows the user after fetch resolves", async () => {
 });
 ```
 
-Keep `act` out of the mock itself — the mock should emulate the real dependency (which has no `act`). The `act` belongs in the test, at the point you let the update happen.
+Keep `act` out of the mock itself. The mock should emulate the real dependency (which has no `act`), and the `act` belongs in the test, at the point you let the update happen.
 
 ## Fake timers
 
@@ -65,11 +65,11 @@ test("fires the timeout", async () => {
 });
 ```
 
-Use the `*Async` timer helpers — they interleave the microtask turns promise chains depend on (the synchronous variants don't):
+Use the `*Async` timer helpers, which interleave the microtask turns promise chains depend on (the synchronous variants don't):
 
-- `jest.runAllTimersAsync()` — run every timer, including ones they schedule (loops forever on recurring timers).
-- `jest.runOnlyPendingTimersAsync()` — run only the currently-queued timers; safe with recurring timers.
-- `jest.advanceTimersByTimeAsync(ms)` — advance by a fixed duration.
+- `jest.runAllTimersAsync()`: run every timer, including ones they schedule (loops forever on recurring timers).
+- `jest.runOnlyPendingTimersAsync()`: run only the currently-queued timers; safe with recurring timers.
+- `jest.advanceTimersByTimeAsync(ms)`: advance by a fixed duration.
 
 ## Real timers with `sleep`
 
@@ -83,7 +83,7 @@ await act(async () => {
 });
 ```
 
-> Avoid picking a "magic" wait value that must exceed the mock's internal delay — that couples your test to the mock's timing. Prefer a deferred promise or fake timers instead.
+> Avoid picking a "magic" wait value that must exceed the mock's internal delay, because that couples your test to the mock's timing. Prefer a deferred promise or fake timers instead.
 
 ## Flushing pending work
 
@@ -104,7 +104,7 @@ await act(async () => {});
 
 ❌ **Don't**
 
-- Fire-and-forget an `act(async () => …)` without awaiting it — this leaks the scope.
-- Put `act()` inside a mock, a component, or a timer patch — it's a test-only boundary.
-- Wrap an entire test in one large `act` — prefer several small, scoped ones.
-- Match a real `sleep` wait to the mock's internal delay — remove the timing dependency instead.
+- Fire-and-forget an `act(async () => …)` without awaiting it. This leaks the scope.
+- Put `act()` inside a mock, a component, or a timer patch. It is a test-only boundary.
+- Wrap an entire test in one large `act`. Prefer several small, scoped ones.
+- Match a real `sleep` wait to the mock's internal delay. Remove the timing dependency instead.

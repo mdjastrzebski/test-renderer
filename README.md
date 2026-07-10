@@ -40,8 +40,8 @@ test("renders a component", async () => {
 
 ## Documentation
 
-- [API Reference](./docs/api.md) — full `RootOptions`, `TestInstance`, and `QueryOptions`
-- [Testing Async Code with `act`](./docs/async-act.md) — resolving promises, fake timers, and avoiding leaked `act` scopes
+- [API Reference](./docs/api.md): full `RootOptions`, `TestInstance`, and `QueryOptions`
+- [Testing Async Code with `act`](./docs/async-act.md): resolving promises, fake timers, and avoiding leaked `act` scopes
 - [Migrating from React Test Renderer](./docs/migrating-from-react-test-renderer.md)
 - [Performance Metrics](./docs/performance-metrics.md)
 - [Versioning & React 19 Compatibility](./docs/versioning.md)
@@ -51,18 +51,18 @@ test("renders a component", async () => {
 Instead of producing a DOM tree or a native view hierarchy, the renderer builds an in-memory **Test Output Tree**:
 
 - Composed of **`TestNode`s**, where each node is either:
-  - A **`TestInstance`** — represents a host element such as `div` or `View`
-  - A plain **`string`** — represents a text node
+  - A **`TestInstance`**: represents a host element such as `div` or `View`
+  - A plain **`string`**: represents a text node
 - The root is accessible via `root.container`, a `TestInstance` whose `type` is an empty string
-- `TestInstance` nodes are traversable and queryable — see the [`TestInstance`](./docs/api.md#testinstance) API
+- `TestInstance` nodes are traversable and queryable; see the [`TestInstance`](./docs/api.md#testinstance) API
 
 ## JSON Output Tree
 
-Calling `toJSON()` on a `TestInstance` produces a **JSON Output Tree** — a static, plain-object snapshot of the Test Output Tree at that point in time:
+Calling `toJSON()` on a `TestInstance` produces a **JSON Output Tree**, a static, plain-object snapshot of the Test Output Tree at that point in time:
 
 - Composed of **`JsonNode`s**, where each node is either:
-  - A **`JsonElement`** — a plain object with `type`, `props`, and `children`
-  - A plain **`string`** — a text node
+  - A **`JsonElement`**: a plain object with `type`, `props`, and `children`
+  - A plain **`string`**: a text node
 - Contains no live references, making it safe to serialize
 - Ideal for snapshot testing
 
