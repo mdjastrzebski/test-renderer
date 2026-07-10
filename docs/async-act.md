@@ -1,4 +1,4 @@
-# Testing Timers & Async Code
+# Testing Async Code with `act`
 
 When a component updates state asynchronously — after a network call, a `setTimeout`, or a promise — you need to let those updates settle **inside `act()`** before asserting. This guide shows the recommended patterns and the pitfalls to avoid.
 
@@ -57,6 +57,7 @@ test("fires the timeout", async () => {
 
   await act(async () => {
     await jest.runAllTimersAsync(); // fires timers *and* flushes microtasks
+    // or: await jest.runOnlyPendingTimersAsync();
   });
   // message is visible here
 
@@ -64,7 +65,11 @@ test("fires the timeout", async () => {
 });
 ```
 
-Use the `*Async` timer helpers (`runAllTimersAsync`, `advanceTimersByTimeAsync`) — they interleave the microtask turns that promise chains depend on. The plain synchronous variants fire timers but won't let awaited promises resolve.
+Use the `*Async` timer helpers — they interleave the microtask turns promise chains depend on (the synchronous variants don't):
+
+- `jest.runAllTimersAsync()` — run every timer, including ones they schedule (loops forever on recurring timers).
+- `jest.runOnlyPendingTimersAsync()` — run only the currently-queued timers; safe with recurring timers.
+- `jest.advanceTimersByTimeAsync(ms)` — advance by a fixed duration.
 
 ## Real timers with `sleep`
 

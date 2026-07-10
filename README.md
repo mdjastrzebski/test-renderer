@@ -41,7 +41,7 @@ test("renders a component", async () => {
 ## Documentation
 
 - [API Reference](./docs/api.md) — full `RootOptions`, `TestInstance`, and `QueryOptions`
-- [Testing Timers & Async Code](./docs/testing-timers-and-async.md) — resolving promises, fake timers, and avoiding leaked `act` scopes
+- [Testing Async Code with `act`](./docs/async-act.md) — resolving promises, fake timers, and avoiding leaked `act` scopes
 - [Migrating from React Test Renderer](./docs/migrating-from-react-test-renderer.md)
 - [Performance Metrics](./docs/performance-metrics.md)
 - [Versioning & React 19 Compatibility](./docs/versioning.md)
