@@ -18,14 +18,16 @@ fails typecheck; a method missing across all slices is caught where `index.ts` a
 object to `TestHostConfig`.
 
 - `types.ts` holds every host type, including `TestHostConfig` (the `@types/react-reconciler` config).
-- `core.ts` covers renderer flags, commit lifecycle hooks, node/scope lookups, form plumbing, and the
-  render-phase methods for instance creation, host context and public instances. It also owns
+- `core.ts` covers renderer flags, commit lifecycle hooks, node/scope lookups, and the render-phase
+  methods for instance creation, host context and public instances. It also owns
   `nodeToInstanceMap`, the public-node registry.
-- `mutation.ts` covers commit-phase tree mutations, updates and hiding/unhiding.
+- `mutation.ts` covers commit-phase tree mutations, updates and hiding/unhiding. It also holds the
+  low-level tree helpers (`appendChildToParent`, `insertBeforeChild`, `removeChildFromParent`,
+  `formatInstanceType`) that `core.ts` reuses for the render-phase equivalents.
 - `scheduling.ts` covers update priorities, event metadata, timeouts and microtasks.
 - `suspense.ts` covers suspending a commit.
-- `instance-tree.ts` holds the low-level tree helpers (`appendChild`, `insertBefore`, `removeChild`)
-  shared by `core.ts` and `mutation.ts`.
+- `misc.ts` covers the host transition context and the form/post-paint callbacks that don't fall
+  under any of the above and have no behavior in a test renderer.
 
 When changing renderer behavior, start with `src/renderer.ts` and the relevant `src/reconciler/` slice.
 

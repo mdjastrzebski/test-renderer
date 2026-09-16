@@ -1,12 +1,10 @@
-import type ReactReconciler from "react-reconciler";
 import type { Fiber } from "react-reconciler";
 
 import { Tag } from "../constants";
 import { mark, measureEnd, measureStart } from "../performance";
 import { TestInstance } from "../test-instance";
-import { REACT_CONTEXT_TYPE } from "../test-utils/react-constants";
 import { formatComponentList } from "../utils";
-import { appendChild, formatInstanceType } from "./instance-tree";
+import { appendChildToParent as appendChild, formatInstanceType } from "./mutation";
 import type {
   Container,
   HostContext,
@@ -15,7 +13,6 @@ import type {
   PublicInstance,
   TestHostConfig,
   TextInstance,
-  TransitionStatus,
   Type,
 } from "./types";
 
@@ -26,9 +23,8 @@ import type {
 export const nodeToInstanceMap = new WeakMap<object, Instance>();
 
 /**
- * Renderer-wide host config: feature flags, commit lifecycle hooks, node/scope lookups, the
- * form/transition plumbing that has no behavior in a test renderer, and the render-phase methods
- * for instance creation, host context and public instances.
+ * Renderer-wide host config: feature flags, commit lifecycle hooks, node/scope lookups, and the
+ * render-phase methods for instance creation, host context and public instances.
  */
 export const coreHostConfig = {
   /**
@@ -128,24 +124,6 @@ export const coreHostConfig = {
 
   detachDeletedInstance(_node: Instance): void {
     mark("reconciler/detachDeletedInstance");
-  },
-
-  NotPendingTransition: null,
-  HostTransitionContext: {
-    $$typeof: REACT_CONTEXT_TYPE,
-    Provider: null as unknown as ReactReconciler.ReactProviderType<TransitionStatus>,
-    Consumer: null as unknown as ReactReconciler.ReactContext<TransitionStatus>,
-    _currentValue: null,
-    _currentValue2: null,
-    _threadCount: 0,
-  } as ReactReconciler.ReactContext<TransitionStatus>,
-
-  resetFormInstance(_form: Instance) {
-    mark("reconciler/resetFormInstance");
-  },
-
-  requestPostPaintCallback(_callback: (endTime: number) => void) {
-    mark("reconciler/requestPostPaintCallback");
   },
 
   /**
