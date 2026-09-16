@@ -4,12 +4,27 @@ Key files:
 
 - `src/index.ts` is the public entry point and exports `createRoot`.
 - `src/renderer.ts` creates renderer roots and coordinates public rendering APIs.
-- `src/reconciler.ts` defines the `react-reconciler` host config and tree updates.
+- `src/reconciler/` defines the `react-reconciler` host config, split into functional slices.
 - `src/test-instance.ts` defines `TestInstance`, the main wrapper around rendered host nodes.
 - `src/to-json.ts` serializes rendered output into the snapshot-friendly JSON format.
 - `src/query-all.ts` contains tree traversal helpers used for querying.
 - `src/performance.ts` contains optional performance instrumentation.
 
-When changing renderer behavior, start with `src/renderer.ts` and `src/reconciler.ts`.
+## Host config slices
+
+`src/reconciler/index.ts` composes the slices into a single host config and creates `TestReconciler`.
+Each slice is typed as a `Pick<TestHostConfig, ...>`, so a method that is dropped or misplaced fails
+typecheck.
+
+- `types.ts` holds every host type, including `TestHostConfig` (the `@types/react-reconciler` config).
+- `core.ts` covers renderer flags, commit lifecycle hooks, node/scope lookups and form plumbing.
+- `render-phase.ts` covers instance creation, host context and public instances.
+- `mutation.ts` covers commit-phase tree mutations, updates and hiding/unhiding.
+- `scheduling.ts` covers update priorities, event metadata, timeouts and microtasks.
+- `suspense.ts` covers suspending a commit.
+- `instance-tree.ts` and `node-map.ts` hold the low-level tree helpers and the public-node registry
+  shared by the slices.
+
+When changing renderer behavior, start with `src/renderer.ts` and the relevant `src/reconciler/` slice.
 
 When changing output shape or snapshot behavior, check `src/test-instance.ts` and `src/to-json.ts`.
