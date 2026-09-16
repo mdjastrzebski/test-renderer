@@ -5,14 +5,7 @@ import type { Props, SuspendedState, TestHostConfig, Type } from "./types";
  * Host config methods deciding whether a commit needs to be suspended while host components
  * finish loading. Nothing loads in a test renderer, so no commit is ever suspended.
  */
-export const suspenseHostConfig: Pick<
-  TestHostConfig,
-  | "maySuspendCommit"
-  | "preloadInstance"
-  | "startSuspendingCommit"
-  | "suspendInstance"
-  | "waitForCommitToBeReady"
-> = {
+export const suspenseHostConfig = {
   /**
    * #### `maySuspendCommit(type, props)`
    *
@@ -72,4 +65,4 @@ export const suspenseHostConfig: Pick<
 
     return null;
   },
-};
+} satisfies Partial<TestHostConfig>;

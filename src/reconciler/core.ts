@@ -10,25 +10,7 @@ import type { Container, Instance, TestHostConfig, TransitionStatus } from "./ty
  * Renderer-wide host config: feature flags, commit lifecycle hooks, node lookups and the
  * form/transition plumbing that has no behavior in a test renderer.
  */
-export const coreHostConfig: Pick<
-  TestHostConfig,
-  | "isPrimaryRenderer"
-  | "warnsIfNotActing"
-  | "supportsHydration"
-  | "prepareForCommit"
-  | "resetAfterCommit"
-  | "preparePortalMount"
-  | "getInstanceFromNode"
-  | "beforeActiveInstanceBlur"
-  | "afterActiveInstanceBlur"
-  | "prepareScopeUpdate"
-  | "getInstanceFromScope"
-  | "detachDeletedInstance"
-  | "NotPendingTransition"
-  | "HostTransitionContext"
-  | "resetFormInstance"
-  | "requestPostPaintCallback"
-> = {
+export const coreHostConfig = {
   /**
    * #### `isPrimaryRenderer`
    *
@@ -145,4 +127,4 @@ export const coreHostConfig: Pick<
   requestPostPaintCallback(_callback: (endTime: number) => void) {
     mark("reconciler/requestPostPaintCallback");
   },
-};
+} satisfies Partial<TestHostConfig>;

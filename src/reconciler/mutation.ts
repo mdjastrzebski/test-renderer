@@ -13,26 +13,7 @@ import type { Container, Instance, Props, TestHostConfig, TextInstance, Type } f
  * Host config methods mutating the committed tree: insertions, removals, updates and
  * hiding/unhiding driven by Suspense.
  */
-export const mutationHostConfig: Pick<
-  TestHostConfig,
-  | "supportsMutation"
-  | "supportsPersistence"
-  | "appendChild"
-  | "appendChildToContainer"
-  | "insertBefore"
-  | "insertInContainerBefore"
-  | "removeChild"
-  | "removeChildFromContainer"
-  | "resetTextContent"
-  | "commitTextUpdate"
-  | "commitMount"
-  | "commitUpdate"
-  | "hideInstance"
-  | "hideTextInstance"
-  | "unhideInstance"
-  | "unhideTextInstance"
-  | "clearContainer"
-> = {
+export const mutationHostConfig = {
   /**
    * The reconciler has two modes: mutation mode and persistent mode. You must specify one of them.
    *
@@ -350,4 +331,4 @@ export const mutationHostConfig: Pick<
 
     container.children.splice(0);
   },
-};
+} satisfies Partial<TestHostConfig>;

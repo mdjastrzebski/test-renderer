@@ -13,8 +13,9 @@ Key files:
 ## Host config slices
 
 `src/reconciler/index.ts` composes the slices into a single host config and creates `TestReconciler`.
-Each slice is typed as a `Pick<TestHostConfig, ...>`, so a method that is dropped or misplaced fails
-typecheck.
+Each slice is checked with `satisfies Partial<TestHostConfig>`, so a misplaced or misspelled method
+fails typecheck; a method missing across all slices is caught where `index.ts` assigns the composed
+object to `TestHostConfig`.
 
 - `types.ts` holds every host type, including `TestHostConfig` (the `@types/react-reconciler` config).
 - `core.ts` covers renderer flags, commit lifecycle hooks, node/scope lookups and form plumbing.

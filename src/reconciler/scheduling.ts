@@ -8,21 +8,7 @@ let currentUpdatePriority: number = NoEventPriority;
 /**
  * Host config methods for update priorities, event metadata and task scheduling.
  */
-export const schedulingHostConfig: Pick<
-  TestHostConfig,
-  | "setCurrentUpdatePriority"
-  | "getCurrentUpdatePriority"
-  | "resolveUpdatePriority"
-  | "trackSchedulerEvent"
-  | "resolveEventType"
-  | "resolveEventTimeStamp"
-  | "shouldAttemptEagerTransition"
-  | "scheduleTimeout"
-  | "cancelTimeout"
-  | "noTimeout"
-  | "supportsMicrotasks"
-  | "scheduleMicrotask"
-> = {
+export const schedulingHostConfig = {
   setCurrentUpdatePriority(priority: number) {
     mark("reconciler/setCurrentUpdatePriority", { priority });
 
@@ -121,4 +107,4 @@ export const schedulingHostConfig: Pick<
       mark("reconciler/scheduled microtask:end");
     });
   },
-};
+} satisfies Partial<TestHostConfig>;
