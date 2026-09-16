@@ -19,8 +19,8 @@ object to `TestHostConfig`.
 
 - `types.ts` holds every host type, including `TestHostConfig` (the `@types/react-reconciler` config).
 - `utils.ts` holds the low-level tree helpers (`appendChildToParent`, `insertBeforeChild`,
-  `removeChildFromParent`, `formatInstanceType`) and `nodeToInstanceMap`, the public-node registry,
-  shared by `core.ts` and `mutation.ts`.
+  `removeChildFromParent`, `formatInstanceType`) and `nodeToInstanceMap`, the public-node registry
+  used by `core.ts`.
 - `core.ts` covers renderer flags, commit lifecycle hooks, node/scope lookups, and the render-phase
   methods for instance creation, host context and public instances.
 - `mutation.ts` covers commit-phase tree mutations, updates and hiding/unhiding.
