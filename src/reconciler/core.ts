@@ -4,7 +4,6 @@ import { Tag } from "../constants";
 import { mark, measureEnd, measureStart } from "../performance";
 import { TestInstance } from "../test-instance";
 import { formatComponentList } from "../utils";
-import { appendChildToParent as appendChild, formatInstanceType } from "./mutation";
 import type {
   Container,
   HostContext,
@@ -15,12 +14,7 @@ import type {
   TextInstance,
   Type,
 } from "./types";
-
-/**
- * Maps public nodes handed to user code (`TestInstance`, scope instances) back to the host
- * instances they were created from.
- */
-export const nodeToInstanceMap = new WeakMap<object, Instance>();
+import { appendChildToParent, formatInstanceType, nodeToInstanceMap } from "./utils";
 
 /**
  * Renderer-wide host config: feature flags, commit lifecycle hooks, node/scope lookups, and the
@@ -224,7 +218,7 @@ export const coreHostConfig = {
       });
     }
 
-    appendChild(parentInstance, child);
+    appendChildToParent(parentInstance, child);
   },
 
   /**
