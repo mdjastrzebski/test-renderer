@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@types/react-reconciler": "~0.33.0",
-    "react-reconciler": "~0.33.0"
+    "react-reconciler": "~0.34.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -59,12 +59,12 @@
     "@release-it/conventional-changelog": "^10.0.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.6.0",
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.3.0",
     "eslint": "^10.2.0",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "jest": "^30.3.0",
     "oxfmt": "^0.44.0",
-    "react": "^19.2.5",
+    "react": "^19.3.0",
     "release-it": "^19.2.4",
     "ts-jest": "^29.4.9",
     "tsdown": "^0.21.7",
@@ -75,6 +75,6 @@
     "react": "^19.0.0"
   },
   "testRenderer": {
-    "supportedReactRange": ">=19.0.0 <19.3.0"
+    "supportedReactRange": ">=19.0.0 <19.4.0"
   }
 }
