@@ -2,6 +2,15 @@
 
 All notable changes to `test-renderer` are documented in this file.
 
+## [1.3.0](https://github.com/mdjastrzebski/test-renderer/compare/v1.2.0...v1.3.0) (2026-09-17)
+
+### Features
+
+- React 19.3 support ([#56](https://github.com/mdjastrzebski/test-renderer/issues/56)) ([1886ec5](https://github.com/mdjastrzebski/test-renderer/commit/1886ec57bf5c98ddc1f772b1a17db899e22089bc))
+- `1.3.x` is now the preferred compatibility line for React `19.3`
+- Updated bundled `react-reconciler` to `~0.34.0`
+- Added support coverage for React 19.3 features relevant to `test-renderer`, including fragment refs and `<ViewTransition>`
+
 ## [1.2.0](https://github.com/mdjastrzebski/test-renderer/compare/v1.1.0...v1.2.0) (2026-04-16)
 
 ### Features

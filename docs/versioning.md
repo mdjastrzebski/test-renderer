@@ -36,8 +36,9 @@ Starting with `1.x`, `test-renderer` tracks preferred React 19 compatibility lin
 | `1.0.x`                 | `19.0`          | `~0.31.0`                  | `^19.0.0`                | Actions, `useActionState`, `useOptimistic`, `use`       |
 | `1.1.x`                 | `19.1`          | `~0.32.0`                  | `^19.0.0`                | Owner Stack support, CSS-selector-safe `useId()` format |
 | `1.2.x`                 | `19.2`          | `~0.33.0`                  | `^19.0.0`                | `<Activity />`, `useEffectEvent`                        |
+| `1.3.x`                 | `19.3`          | `~0.34.0`                  | `^19.0.0`                | Fragment refs, `<ViewTransition>`                       |
 
-These feature examples are illustrative, not exhaustive. The `1.0.x`, `1.1.x`, and `1.2.x` lines are current compatibility lines. New React-minor-specific support lands on the matching preferred React / `react-reconciler` line for each `1.x` release, even though the package publishes a broad React 19 peer range.
+These feature examples are illustrative, not exhaustive. The `1.0.x`, `1.1.x`, `1.2.x`, and `1.3.x` lines are current compatibility lines. New React-minor-specific support lands on the matching preferred React / `react-reconciler` line for each `1.x` release, even though the package publishes a broad React 19 peer range.
 
 ## Release Rules
 
@@ -65,6 +66,7 @@ Examples:
 
 - `1.0.x` -> `1.1.x` when moving from RR `0.31` to `0.32`
 - `1.1.x` -> `1.2.x` when moving from RR `0.32` to `0.33`
+- `1.2.x` -> `1.3.x` when moving from RR `0.33` to `0.34`
 
 Minor releases are where React-minor-specific features become officially supported. Older lines may still install and work on newer React minors, but the newer line is the preferred target once it exists.
 
@@ -107,7 +109,7 @@ Recommended range:
 ```json
 {
   "dependencies": {
-    "test-renderer": "^1.0.0 || ^1.1.0 || ^1.2.0"
+    "test-renderer": "^1.0.0 || ^1.1.0 || ^1.2.0 || ^1.3.0"
   }
 }
 ```
@@ -127,6 +129,7 @@ When multiple `1.x` compatibility lines are live, direct `test-renderer` consume
 - `react19.0` -> latest `1.0.x`
 - `react19.1` -> latest `1.1.x`
 - `react19.2` -> latest `1.2.x`
+- `react19.3` -> latest `1.3.x`
 
 This keeps `npm` install flows predictable for users who consume `test-renderer` directly.
 
@@ -139,6 +142,7 @@ The recommended `test-renderer` 1.x scheme is:
 - `1.0.x` for React `19.0`
 - `1.1.x` for React `19.1`
 - `1.2.x` for React `19.2`
+- `1.3.x` for React `19.3`
 
 With this scheme:
 
