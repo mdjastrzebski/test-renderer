@@ -2,6 +2,7 @@ import type ReactReconciler from "react-reconciler";
 import type { Fiber } from "react-reconciler";
 
 import type { Tag } from "../constants";
+import type { JsonElement } from "../to-json";
 
 export type Type = string;
 export type Props = Record<string, unknown>;
@@ -59,6 +60,110 @@ export type HostContext = {
 };
 
 /**
+ * Host representation of a React Fragment ref (React >= 19.3).
+ *
+ * It tracks the host children currently rendered inside the fragment, so that fragment refs
+ * can be observed in tests. The public API of DOM fragment instances (`focus`,
+ * `addEventListener`, `getClientRects`, ...) is intentionally not implemented.
+ */
+export type FragmentInstance = {
+  children: Array<Instance | TextInstance>;
+  unstable_fiber: Fiber;
+};
+
+/**
+ * The `*HostConfigExtras` types below (this one, `SuspenseHostConfigExtras`,
+ * `ViewTransitionHostConfigExtras`) patch in host config methods for React >= 19.3 features that
+ * are not part of the `@types/react-reconciler` definitions yet.
+ */
+type FragmentRefHostConfigExtras = {
+  createFragmentInstance: (fragmentFiber: Fiber) => FragmentInstance;
+  updateFragmentInstanceFiber: (fragmentFiber: Fiber, instance: FragmentInstance) => void;
+  commitNewChildToFragmentInstance: (
+    child: Instance | TextInstance,
+    fragmentInstance: FragmentInstance,
+  ) => void;
+  deleteChildFromFragmentInstance: (
+    child: Instance | TextInstance,
+    fragmentInstance: FragmentInstance,
+  ) => void;
+};
+
+/**
+ * React >= 19.3 calls `suspendOnActiveViewTransition` unconditionally during every commit, so it
+ * needs a stub regardless of whether `<ViewTransition>` is used.
+ */
+type SuspenseHostConfigExtras = {
+  maySuspendCommitOnUpdate: (type: Type, previousProps: Props, nextProps: Props) => boolean;
+  maySuspendCommitInSyncRender: (type: Type, props: Props) => boolean;
+  suspendOnActiveViewTransition: (suspendedState: SuspendedState, rootContainer: Container) => void;
+};
+
+/**
+ * There is no real geometry to measure in a test renderer, so an instance measurement is a
+ * snapshot of its rendered content instead (the same shape `instanceToJson` produces). Comparing
+ * two snapshots is how `hasInstanceChanged` tells an instance that actually changed apart from
+ * one that was merely inside a subtree React re-rendered for an unrelated reason.
+ */
+export type InstanceMeasurement = JsonElement | null;
+
+/**
+ * A running `<ViewTransition>`.
+ *
+ * There is nothing to animate in a test renderer, so `startViewTransition` completes the
+ * transition on a microtask instead of waiting on a real animation. `finished` is what
+ * `addViewTransitionFinishedListener` observes; `stopped` lets `stopViewTransition` (called by
+ * React when a later sync commit interrupts this transition) skip a flush React has already
+ * performed itself, without leaving `finished` unresolved.
+ */
+export type ViewTransition = {
+  finished: Promise<void>;
+  resolveFinished: () => void;
+  stopped: boolean;
+};
+
+/**
+ * There is nothing to hand back from `createViewTransitionInstance` in a test renderer, so it is
+ * represented by `null`.
+ */
+export type ViewTransitionInstance = null;
+
+type ViewTransitionHostConfigExtras = {
+  applyViewTransitionName: (instance: Instance, name: string, className: string) => void;
+  restoreViewTransitionName: (instance: Instance, props: Props) => void;
+  cancelViewTransitionName: (instance: Instance, name: string, props: Props) => void;
+  cancelRootViewTransitionName: (rootContainer: Container) => void;
+  restoreRootViewTransitionName: (rootContainer: Container) => void;
+  measureInstance: (instance: Instance) => InstanceMeasurement;
+  measureClonedInstance: (instance: Instance) => InstanceMeasurement;
+  wasInstanceInViewport: (measurement: InstanceMeasurement) => boolean;
+  hasInstanceChanged: (
+    previousMeasurement: InstanceMeasurement,
+    nextMeasurement: InstanceMeasurement,
+  ) => boolean;
+  hasInstanceAffectedParent: (
+    previousMeasurement: InstanceMeasurement,
+    nextMeasurement: InstanceMeasurement,
+  ) => boolean;
+  startViewTransition: (
+    suspendedState: SuspendedState,
+    rootContainer: Container,
+    transitionTypes: null | string[],
+    flushMutationEffects: () => void,
+    flushLayoutEffects: () => void,
+    flushAfterMutationEffects: () => void,
+    flushSpawnedWork: () => void,
+    flushPassiveEffects: () => boolean,
+    reportError: (error: unknown) => void,
+    onSuspend: (reason: string) => void,
+    onFinish: () => void,
+  ) => ViewTransition;
+  stopViewTransition: (viewTransition: ViewTransition) => void;
+  addViewTransitionFinishedListener: (viewTransition: ViewTransition, listener: () => void) => void;
+  createViewTransitionInstance: (name: string) => ViewTransitionInstance;
+};
+
+/**
  * Full host config implemented by this renderer.
  *
  * The implementation is split into functional slices (see the sibling modules), each typed as a
@@ -79,4 +184,7 @@ export type TestHostConfig = ReactReconciler.HostConfig<
   TimeoutHandle,
   NoTimeout,
   TransitionStatus
->;
+> &
+  SuspenseHostConfigExtras &
+  FragmentRefHostConfigExtras &
+  ViewTransitionHostConfigExtras;

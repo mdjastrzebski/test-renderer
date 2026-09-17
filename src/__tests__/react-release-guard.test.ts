@@ -10,13 +10,13 @@ describe("react release guard", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        REACT_RELEASE_GUARD_LATEST: "19.2.5",
+        REACT_RELEASE_GUARD_LATEST: "19.3.5",
       },
     });
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain(
-      "React 19.2.5 is still within the supported window (React 19.0.x through 19.2.x).",
+      "React 19.3.5 is still within the supported window (React 19.0.x through 19.3.x).",
     );
     expect(result.stderr).toBe("");
   });
@@ -26,17 +26,17 @@ describe("react release guard", () => {
       encoding: "utf8",
       env: {
         ...process.env,
-        REACT_RELEASE_GUARD_LATEST: "19.3.0",
+        REACT_RELEASE_GUARD_LATEST: "19.4.0",
       },
     });
 
     expect(result.status).toBe(1);
     expect(result.stdout).toBe("");
     expect(result.stderr).toContain(
-      "React 19.3.0 has been released on npm, but this repository currently supports only React 19.0.x through 19.2.x.",
+      "React 19.4.0 has been released on npm, but this repository currently supports only React 19.0.x through 19.3.x.",
     );
     expect(result.stderr).toContain("Current peerDependencies.react: ^19.0.0");
-    expect(result.stderr).toContain("Configured supportedReactRange: >=19.0.0 <19.3.0");
-    expect(result.stderr).toContain("Current derived React ceiling: <19.3.0");
+    expect(result.stderr).toContain("Configured supportedReactRange: >=19.0.0 <19.4.0");
+    expect(result.stderr).toContain("Current derived React ceiling: <19.4.0");
   });
 });

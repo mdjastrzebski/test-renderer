@@ -25,9 +25,22 @@ object to `TestHostConfig`.
   methods for instance creation, host context and public instances.
 - `mutation.ts` covers commit-phase tree mutations, updates and hiding/unhiding.
 - `scheduling.ts` covers update priorities, event metadata, timeouts and microtasks.
-- `suspense.ts` covers suspending a commit.
+- `suspense.ts` covers suspending a commit, including the view-transition-eligibility stubs React
+  calls unconditionally regardless of whether `<ViewTransition>` is used.
 - `misc.ts` covers the host transition context and the form/post-paint callbacks that don't fall
   under any of the above and have no behavior in a test renderer.
+- `fragment-refs.ts` covers fragment refs (React >= 19.3).
+- `view-transitions.ts` covers `<ViewTransition>` (React >= 19.3). There is nothing to paint, so
+  naming is a no-op and `wasInstanceInViewport` is always `true`. There is no real geometry to
+  measure either, so `measureInstance` snapshots an instance's rendered content instead (via
+  `instanceToJson`), and `hasInstanceChanged` compares two such snapshots rather than bounding
+  boxes. Unlike `react-test-renderer`, `startViewTransition` returns a real running transition that completes on
+  a microtask instead of an animation, so `onEnter` / `onUpdate` / `onExit` fire like they would
+  for an animation that finishes instantly. A later synchronous commit can still interrupt it
+  (`stopViewTransition`), in which case it resolves without re-flushing a commit React already
+  flushed itself. No test currently exercises `stopViewTransition` itself (the existing
+  interruption test never reaches it, since same-state updates are coalesced before commit), so
+  this behavior is unverified.
 
 When changing renderer behavior, start with `src/renderer.ts` and the relevant `src/reconciler/` slice.
 

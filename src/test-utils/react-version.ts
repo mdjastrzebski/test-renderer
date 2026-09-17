@@ -19,3 +19,4 @@ function isReactMinorOrNewer(targetMinor: number): boolean {
 }
 
 export const testGateReact19_2 = isReactMinorOrNewer(2) ? test : test.skip;
+export const testGateReact19_3 = isReactMinorOrNewer(3) ? test : test.skip;
