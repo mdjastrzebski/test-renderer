@@ -207,8 +207,8 @@ testGateReact19_3(
 
     await act(() => {
       React.startTransition(() => setLabel?.("B"));
-      // Interrupts the pending transition before its microtask runs: React itself flushes this
-      // commit synchronously and calls `stopViewTransition` on the one still in flight.
+      // Same state, same tick: React coalesces to "C" before "B" ever commits as its own
+      // transition, so this never reaches `startViewTransition`/`stopViewTransition` at all.
       TestReconciler.flushSyncFromReconciler(() => setLabel?.("C"));
     });
 
@@ -219,9 +219,7 @@ testGateReact19_3(
       </div>
     </>
   `);
-    // The interrupting commit is synchronous, not a transition, so it never goes through
-    // `startViewTransition` itself; `onUpdate` firing here would mean the interrupted
-    // transition's own (stale) flush ran anyway instead of being skipped by `stopViewTransition`.
+    // "B" is superseded pre-commit, so `onUpdate` firing here would mean it ran anyway.
     expect(events).toEqual([]);
   },
 );

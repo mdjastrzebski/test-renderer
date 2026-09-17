@@ -38,7 +38,9 @@ object to `TestHostConfig`.
   a microtask instead of an animation, so `onEnter` / `onUpdate` / `onExit` fire like they would
   for an animation that finishes instantly. A later synchronous commit can still interrupt it
   (`stopViewTransition`), in which case it resolves without re-flushing a commit React already
-  flushed itself.
+  flushed itself. No test currently exercises `stopViewTransition` itself (the existing
+  interruption test never reaches it, since same-state updates are coalesced before commit), so
+  this behavior is unverified.
 
 When changing renderer behavior, start with `src/renderer.ts` and the relevant `src/reconciler/` slice.
 
