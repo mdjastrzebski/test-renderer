@@ -93,7 +93,8 @@ export const viewTransitionHostConfig = {
    * the phase where React measures instances and actually decides whether to fire `onEnter` /
    * `onUpdate`. `flushPassiveEffects` must also be called explicitly here: unlike a synchronous,
    * inline completion, deferring to a microtask means React's own follow-up scheduling no longer
-   * flushes passive effects on its own.
+   * flushes passive effects on its own. `_onSuspend` is unused: nothing here ever needs to load or
+   * decode, so this renderer never has a reason to suspend a transition.
    */
   startViewTransition(
     _suspendedState: SuspendedState,

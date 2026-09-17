@@ -119,6 +119,10 @@ export type ViewTransition = {
   stopped: boolean;
 };
 
+/**
+ * There is nothing to hand back from `createViewTransitionInstance` in a test renderer, so it is
+ * represented by `null`.
+ */
 export type ViewTransitionInstance = null;
 
 type ViewTransitionHostConfigExtras = {
