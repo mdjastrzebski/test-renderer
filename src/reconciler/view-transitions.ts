@@ -1,4 +1,5 @@
 import { mark } from "../performance";
+import { instanceToJson } from "../to-json";
 import type {
   Container,
   Instance,
@@ -8,13 +9,16 @@ import type {
   TestHostConfig,
   ViewTransition,
 } from "./types";
+import { deepEqual } from "./utils";
 
 /**
  * Host config methods driving `<ViewTransition>`.
  *
- * There is nothing to measure or paint in a test renderer, so naming and measuring are no-ops:
- * `wasInstanceInViewport` is always `true` and `hasInstanceChanged` is always `true`, since there
- * is no real geometry to say otherwise. `startViewTransition` completes on a microtask instead of
+ * There is nothing to paint in a test renderer, so naming is a no-op and `wasInstanceInViewport`
+ * is always `true`, since there is no real viewport to say otherwise. There is no real geometry
+ * to measure either, so `measureInstance` / `measureClonedInstance` snapshot an instance's
+ * rendered content instead (via `instanceToJson`), and `hasInstanceChanged` compares two such
+ * snapshots rather than bounding boxes. `startViewTransition` completes on a microtask instead of
  * waiting on a real animation, but it still goes through the real commit phases (including
  * `flushAfterMutationEffects`, which is what React uses to decide an instance changed) and
  * resolves the transition it returns, so `onEnter` / `onUpdate` / `onExit` fire the same way they
@@ -41,16 +45,16 @@ export const viewTransitionHostConfig = {
     mark("reconciler/restoreRootViewTransitionName");
   },
 
-  measureInstance(_instance: Instance) {
+  measureInstance(instance: Instance) {
     mark("reconciler/measureInstance");
 
-    return null;
+    return instanceToJson(instance);
   },
 
-  measureClonedInstance(_instance: Instance) {
+  measureClonedInstance(instance: Instance) {
     mark("reconciler/measureClonedInstance");
 
-    return null;
+    return instanceToJson(instance);
   },
 
   wasInstanceInViewport(_measurement: InstanceMeasurement) {
@@ -60,16 +64,19 @@ export const viewTransitionHostConfig = {
   },
 
   /**
-   * There is no real geometry to diff, so any instance inside a subtree that React already
-   * flagged as changed is treated as changed. Without this, `onUpdate` would never fire.
+   * There is no real geometry to diff, so this compares rendered-content snapshots instead:
+   * an instance whose own subtree re-rendered to the same output (e.g. it merely sits inside a
+   * `<ViewTransition>` that a sibling elsewhere in the commit caused to be measured) must not be
+   * reported as changed, or `onUpdate` would fire for every `<ViewTransition>` touched by a
+   * commit rather than the ones that actually changed.
    */
   hasInstanceChanged(
-    _previousMeasurement: InstanceMeasurement,
-    _nextMeasurement: InstanceMeasurement,
+    previousMeasurement: InstanceMeasurement,
+    nextMeasurement: InstanceMeasurement,
   ) {
     mark("reconciler/hasInstanceChanged");
 
-    return true;
+    return !deepEqual(previousMeasurement, nextMeasurement);
   },
 
   hasInstanceAffectedParent(

@@ -138,6 +138,49 @@ testGateReact19_3("ViewTransition fires onEnter, onUpdate and onExit", async () 
 });
 
 testGateReact19_3(
+  "ViewTransition does not fire onUpdate for a sibling whose content did not change",
+  async () => {
+    const events: string[] = [];
+    let setLabel: React.Dispatch<React.SetStateAction<string>> | undefined;
+
+    function App() {
+      const [label, setState] = React.useState("A");
+      setLabel = setState;
+
+      return (
+        <div>
+          <React.ViewTransition
+            name="changing"
+            onUpdate={() => {
+              events.push("changing-update");
+            }}
+          >
+            <div>{label}</div>
+          </React.ViewTransition>
+          <React.ViewTransition
+            name="static"
+            onUpdate={() => {
+              events.push("static-update");
+            }}
+          >
+            <div>static</div>
+          </React.ViewTransition>
+        </div>
+      );
+    }
+
+    const renderer = createRoot();
+    await renderWithAct(renderer, <App />);
+
+    await act(() => {
+      React.startTransition(() => setLabel?.("B"));
+    });
+
+    expect(events).toEqual(["changing-update"]);
+  },
+);
+
+testGateReact19_3(
   "a synchronous update interrupting a pending transition still converges",
   async () => {
     let setLabel: React.Dispatch<React.SetStateAction<string>> | undefined;

@@ -30,10 +30,11 @@ object to `TestHostConfig`.
 - `misc.ts` covers the host transition context and the form/post-paint callbacks that don't fall
   under any of the above and have no behavior in a test renderer.
 - `fragment-refs.ts` covers fragment refs (React >= 19.3).
-- `view-transitions.ts` covers `<ViewTransition>` (React >= 19.3). There is nothing to measure or
-  paint, so naming/measuring methods are no-ops (`wasInstanceInViewport` and `hasInstanceChanged`
-  are always `true`, since there is no real geometry to say otherwise). Unlike
-  `react-test-renderer`, `startViewTransition` returns a real running transition that completes on
+- `view-transitions.ts` covers `<ViewTransition>` (React >= 19.3). There is nothing to paint, so
+  naming is a no-op and `wasInstanceInViewport` is always `true`. There is no real geometry to
+  measure either, so `measureInstance` snapshots an instance's rendered content instead (via
+  `instanceToJson`), and `hasInstanceChanged` compares two such snapshots rather than bounding
+  boxes. Unlike `react-test-renderer`, `startViewTransition` returns a real running transition that completes on
   a microtask instead of an animation, so `onEnter` / `onUpdate` / `onExit` fire like they would
   for an animation that finishes instantly. A later synchronous commit can still interrupt it
   (`stopViewTransition`), in which case it resolves without re-flushing a commit React already

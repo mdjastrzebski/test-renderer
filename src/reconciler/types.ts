@@ -2,6 +2,7 @@ import type ReactReconciler from "react-reconciler";
 import type { Fiber } from "react-reconciler";
 
 import type { Tag } from "../constants";
+import type { JsonElement } from "../to-json";
 
 export type Type = string;
 export type Props = Record<string, unknown>;
@@ -99,10 +100,12 @@ type SuspenseHostConfigExtras = {
 };
 
 /**
- * There is nothing to measure in a test renderer, so instance measurements are represented by
- * `null`.
+ * There is no real geometry to measure in a test renderer, so an instance measurement is a
+ * snapshot of its rendered content instead (the same shape `instanceToJson` produces). Comparing
+ * two snapshots is how `hasInstanceChanged` tells an instance that actually changed apart from
+ * one that was merely inside a subtree React re-rendered for an unrelated reason.
  */
-export type InstanceMeasurement = null;
+export type InstanceMeasurement = JsonElement | null;
 
 /**
  * A running `<ViewTransition>`.
