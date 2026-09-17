@@ -7,6 +7,7 @@ import { mutationHostConfig } from "./mutation";
 import { schedulingHostConfig } from "./scheduling";
 import { suspenseHostConfig } from "./suspense";
 import type { TestHostConfig } from "./types";
+import { viewTransitionHostConfig } from "./view-transitions";
 
 const hostConfig: TestHostConfig = {
   ...coreHostConfig,
@@ -14,6 +15,7 @@ const hostConfig: TestHostConfig = {
   ...schedulingHostConfig,
   ...suspenseHostConfig,
   ...fragmentRefHostConfig,
+  ...viewTransitionHostConfig,
   ...miscHostConfig,
 };
 

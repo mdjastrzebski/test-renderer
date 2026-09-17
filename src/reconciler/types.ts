@@ -91,14 +91,60 @@ type FragmentRefHostConfigExtras = {
  * Host config methods deciding whether a commit may be suspended for view transitions that are
  * not part of the `@types/react-reconciler` definitions yet.
  *
- * `<ViewTransition>` itself is not implemented by this renderer yet, but React >= 19.3 calls
- * `suspendOnActiveViewTransition` unconditionally during every commit, so it needs a stub
- * regardless of whether view transitions are used.
+ * React >= 19.3 calls `suspendOnActiveViewTransition` unconditionally during every commit, so it
+ * needs a stub regardless of whether `<ViewTransition>` is used.
  */
 type SuspenseHostConfigExtras = {
   maySuspendCommitOnUpdate: (type: Type, previousProps: Props, nextProps: Props) => boolean;
   maySuspendCommitInSyncRender: (type: Type, props: Props) => boolean;
   suspendOnActiveViewTransition: (suspendedState: SuspendedState, rootContainer: Container) => void;
+};
+
+/**
+ * There is nothing to measure or animate in a test renderer, so instance measurements and
+ * running view transitions are both represented by `null`.
+ */
+export type InstanceMeasurement = null;
+export type ViewTransition = null;
+export type ViewTransitionInstance = null;
+
+/**
+ * Host config methods driving `<ViewTransition>` that are not part of the
+ * `@types/react-reconciler` definitions yet.
+ */
+type ViewTransitionHostConfigExtras = {
+  applyViewTransitionName: (instance: Instance, name: string, className: string) => void;
+  restoreViewTransitionName: (instance: Instance, props: Props) => void;
+  cancelViewTransitionName: (instance: Instance, name: string, props: Props) => void;
+  cancelRootViewTransitionName: (rootContainer: Container) => void;
+  restoreRootViewTransitionName: (rootContainer: Container) => void;
+  measureInstance: (instance: Instance) => InstanceMeasurement;
+  measureClonedInstance: (instance: Instance) => InstanceMeasurement;
+  wasInstanceInViewport: (measurement: InstanceMeasurement) => boolean;
+  hasInstanceChanged: (
+    previousMeasurement: InstanceMeasurement,
+    nextMeasurement: InstanceMeasurement,
+  ) => boolean;
+  hasInstanceAffectedParent: (
+    previousMeasurement: InstanceMeasurement,
+    nextMeasurement: InstanceMeasurement,
+  ) => boolean;
+  startViewTransition: (
+    suspendedState: SuspendedState,
+    rootContainer: Container,
+    transitionTypes: null | string[],
+    flushMutationEffects: () => void,
+    flushLayoutEffects: () => void,
+    flushAfterMutationEffects: () => void,
+    flushSpawnedWork: () => void,
+    flushPassiveEffects: () => boolean,
+    reportError: (error: unknown) => void,
+    onSuspend: (reason: string) => void,
+    onFinish: () => void,
+  ) => ViewTransition;
+  stopViewTransition: (viewTransition: ViewTransition) => void;
+  addViewTransitionFinishedListener: (viewTransition: ViewTransition, listener: () => void) => void;
+  createViewTransitionInstance: (name: string) => ViewTransitionInstance;
 };
 
 /**
@@ -123,5 +169,6 @@ export type TestHostConfig = ReactReconciler.HostConfig<
   NoTimeout,
   TransitionStatus
 > &
+  SuspenseHostConfigExtras &
   FragmentRefHostConfigExtras &
-  SuspenseHostConfigExtras;
+  ViewTransitionHostConfigExtras;

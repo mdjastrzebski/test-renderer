@@ -26,10 +26,13 @@ object to `TestHostConfig`.
 - `mutation.ts` covers commit-phase tree mutations, updates and hiding/unhiding.
 - `scheduling.ts` covers update priorities, event metadata, timeouts and microtasks.
 - `suspense.ts` covers suspending a commit, including the view-transition-eligibility stubs React
-  calls unconditionally even though `<ViewTransition>` itself is not implemented yet.
+  calls unconditionally regardless of whether `<ViewTransition>` is used.
 - `misc.ts` covers the host transition context and the form/post-paint callbacks that don't fall
   under any of the above and have no behavior in a test renderer.
 - `fragment-refs.ts` covers fragment refs (React >= 19.3).
+- `view-transitions.ts` covers `<ViewTransition>` (React >= 19.3): every naming/measuring method is
+  a no-op and `startViewTransition` runs the commit phases inline, so no transition is ever
+  animated or tracked. This mirrors `react-test-renderer`.
 
 When changing renderer behavior, start with `src/renderer.ts` and the relevant `src/reconciler/` slice.
 
