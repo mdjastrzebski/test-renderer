@@ -141,13 +141,19 @@ testGateReact19_3(
   "a synchronous update interrupting a pending transition still converges",
   async () => {
     let setLabel: React.Dispatch<React.SetStateAction<string>> | undefined;
+    const events: string[] = [];
 
     function App() {
       const [label, setState] = React.useState("A");
       setLabel = setState;
 
       return (
-        <React.ViewTransition name="box">
+        <React.ViewTransition
+          name="box"
+          onUpdate={() => {
+            events.push("update");
+          }}
+        >
           <div>{label}</div>
         </React.ViewTransition>
       );
@@ -170,5 +176,9 @@ testGateReact19_3(
       </div>
     </>
   `);
+    // The interrupting commit is synchronous, not a transition, so it never goes through
+    // `startViewTransition` itself; `onUpdate` firing here would mean the interrupted
+    // transition's own (stale) flush ran anyway instead of being skipped by `stopViewTransition`.
+    expect(events).toEqual([]);
   },
 );
