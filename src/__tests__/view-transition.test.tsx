@@ -1,6 +1,7 @@
 import { beforeEach, expect } from "@jest/globals";
 import * as React from "react";
 
+import { TestReconciler } from "../reconciler";
 import { createRoot } from "../renderer";
 import { testGateReact19_3 } from "../test-utils/react-version";
 import { act, renderWithAct } from "../test-utils/render";
@@ -78,18 +79,21 @@ testGateReact19_3("ViewTransition flushes passive effects", async () => {
     React.startTransition(() => setCount?.(1));
   });
 
-  // Nothing may update the tree after the transition here: a later commit flushes whatever
-  // passive effects are still pending and hides a transition that never flushed them itself.
+  // The transition completes on a microtask rather than a real animation, but it must still
+  // flush passive effects itself before finishing.
   expect(effects).toEqual(["effect:0", "cleanup:0", "effect:1"]);
 });
 
-testGateReact19_3("ViewTransition does not fire animation callbacks", async () => {
+testGateReact19_3("ViewTransition fires onEnter, onUpdate and onExit", async () => {
   const events: string[] = [];
   let setVisible: React.Dispatch<React.SetStateAction<boolean>> | undefined;
+  let setLabel: React.Dispatch<React.SetStateAction<string>> | undefined;
 
   function App() {
-    const [visible, setState] = React.useState(false);
-    setVisible = setState;
+    const [visible, _setVisible] = React.useState(false);
+    const [label, _setLabel] = React.useState("A");
+    setVisible = _setVisible;
+    setLabel = _setLabel;
 
     return (
       <div>
@@ -106,7 +110,7 @@ testGateReact19_3("ViewTransition does not fire animation callbacks", async () =
               events.push("update");
             }}
           >
-            <div>panel</div>
+            <div>{label}</div>
           </React.ViewTransition>
         ) : null}
       </div>
@@ -115,15 +119,56 @@ testGateReact19_3("ViewTransition does not fire animation callbacks", async () =
 
   const renderer = createRoot();
   await renderWithAct(renderer, <App />);
+  expect(events).toEqual([]);
 
   await act(() => {
     React.startTransition(() => setVisible?.(true));
   });
+  expect(events).toEqual(["enter"]);
+
+  await act(() => {
+    React.startTransition(() => setLabel?.("B"));
+  });
+  expect(events).toEqual(["enter", "update"]);
+
   await act(() => {
     React.startTransition(() => setVisible?.(false));
   });
-
-  // There is nothing to animate in a test renderer, so no view transition is ever started and
-  // React never flushes the queued view transition events.
-  expect(events).toEqual([]);
+  expect(events).toEqual(["enter", "update", "exit"]);
 });
+
+testGateReact19_3(
+  "a synchronous update interrupting a pending transition still converges",
+  async () => {
+    let setLabel: React.Dispatch<React.SetStateAction<string>> | undefined;
+
+    function App() {
+      const [label, setState] = React.useState("A");
+      setLabel = setState;
+
+      return (
+        <React.ViewTransition name="box">
+          <div>{label}</div>
+        </React.ViewTransition>
+      );
+    }
+
+    const renderer = createRoot();
+    await renderWithAct(renderer, <App />);
+
+    await act(() => {
+      React.startTransition(() => setLabel?.("B"));
+      // Interrupts the pending transition before its microtask runs: React itself flushes this
+      // commit synchronously and calls `stopViewTransition` on the one still in flight.
+      TestReconciler.flushSyncFromReconciler(() => setLabel?.("C"));
+    });
+
+    expect(renderer.container).toMatchInlineSnapshot(`
+    <>
+      <div>
+        C
+      </div>
+    </>
+  `);
+  },
+);

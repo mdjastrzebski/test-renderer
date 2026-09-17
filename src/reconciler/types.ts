@@ -101,11 +101,26 @@ type SuspenseHostConfigExtras = {
 };
 
 /**
- * There is nothing to measure or animate in a test renderer, so instance measurements and
- * running view transitions are both represented by `null`.
+ * There is nothing to measure in a test renderer, so instance measurements are represented by
+ * `null`.
  */
 export type InstanceMeasurement = null;
-export type ViewTransition = null;
+
+/**
+ * A running `<ViewTransition>`.
+ *
+ * There is nothing to animate in a test renderer, so `startViewTransition` completes the
+ * transition on a microtask instead of waiting on a real animation. `finished` is what
+ * `addViewTransitionFinishedListener` observes; `stopped` lets `stopViewTransition` (called by
+ * React when a later sync commit interrupts this transition) skip a flush React has already
+ * performed itself, without leaving `finished` unresolved.
+ */
+export type ViewTransition = {
+  finished: Promise<void>;
+  resolveFinished: () => void;
+  stopped: boolean;
+};
+
 export type ViewTransitionInstance = null;
 
 /**

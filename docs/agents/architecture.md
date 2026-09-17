@@ -30,9 +30,14 @@ object to `TestHostConfig`.
 - `misc.ts` covers the host transition context and the form/post-paint callbacks that don't fall
   under any of the above and have no behavior in a test renderer.
 - `fragment-refs.ts` covers fragment refs (React >= 19.3).
-- `view-transitions.ts` covers `<ViewTransition>` (React >= 19.3): every naming/measuring method is
-  a no-op and `startViewTransition` runs the commit phases inline, so no transition is ever
-  animated or tracked. This mirrors `react-test-renderer`.
+- `view-transitions.ts` covers `<ViewTransition>` (React >= 19.3). There is nothing to measure or
+  paint, so naming/measuring methods are no-ops (`wasInstanceInViewport` and `hasInstanceChanged`
+  are always `true`, since there is no real geometry to say otherwise). Unlike
+  `react-test-renderer`, `startViewTransition` returns a real running transition that completes on
+  a microtask instead of an animation, so `onEnter` / `onUpdate` / `onExit` fire like they would
+  for an animation that finishes instantly. A later synchronous commit can still interrupt it
+  (`stopViewTransition`), in which case it resolves without re-flushing a commit React already
+  flushed itself.
 
 When changing renderer behavior, start with `src/renderer.ts` and the relevant `src/reconciler/` slice.
 
