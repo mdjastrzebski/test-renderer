@@ -9,46 +9,6 @@ let currentUpdatePriority: number = NoEventPriority;
  * Host config methods for update priorities, event metadata and task scheduling.
  */
 export const schedulingHostConfig = {
-  setCurrentUpdatePriority(priority: number) {
-    mark("reconciler/setCurrentUpdatePriority", { priority });
-
-    currentUpdatePriority = priority;
-  },
-
-  getCurrentUpdatePriority() {
-    return currentUpdatePriority;
-  },
-
-  resolveUpdatePriority(): number {
-    const priority = currentUpdatePriority || DefaultEventPriority;
-    mark("reconciler/resolveUpdatePriority", { priority });
-
-    return priority;
-  },
-
-  trackSchedulerEvent() {
-    mark("reconciler/trackSchedulerEvent");
-  },
-
-  resolveEventType(): null {
-    mark("reconciler/resolveEventType");
-
-    return null;
-  },
-
-  resolveEventTimeStamp(): number {
-    const timestamp = -1.1;
-    mark("reconciler/resolveEventTimeStamp", { timestamp });
-
-    return timestamp;
-  },
-
-  shouldAttemptEagerTransition() {
-    mark("reconciler/shouldAttemptEagerTransition", { result: false });
-
-    return false;
-  },
-
   /**
    * #### `scheduleTimeout(fn, delay)`
    *
@@ -106,5 +66,45 @@ export const schedulingHostConfig = {
       fn();
       mark("reconciler/scheduled microtask:end");
     });
+  },
+
+  setCurrentUpdatePriority(priority: number) {
+    mark("reconciler/setCurrentUpdatePriority", { priority });
+
+    currentUpdatePriority = priority;
+  },
+
+  getCurrentUpdatePriority() {
+    return currentUpdatePriority;
+  },
+
+  resolveUpdatePriority(): number {
+    const priority = currentUpdatePriority || DefaultEventPriority;
+    mark("reconciler/resolveUpdatePriority", { priority });
+
+    return priority;
+  },
+
+  shouldAttemptEagerTransition() {
+    mark("reconciler/shouldAttemptEagerTransition", { result: false });
+
+    return false;
+  },
+
+  trackSchedulerEvent() {
+    mark("reconciler/trackSchedulerEvent");
+  },
+
+  resolveEventType(): null {
+    mark("reconciler/resolveEventType");
+
+    return null;
+  },
+
+  resolveEventTimeStamp(): number {
+    const timestamp = -1.1;
+    mark("reconciler/resolveEventTimeStamp", { timestamp });
+
+    return timestamp;
   },
 } satisfies Partial<TestHostConfig>;

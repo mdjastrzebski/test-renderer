@@ -48,79 +48,6 @@ export const coreHostConfig = {
   supportsHydration: false,
 
   /**
-   * #### `prepareForCommit(containerInfo)`
-   *
-   * This method lets you store some information before React starts making changes to the tree on
-   * the screen. For example, the DOM renderer stores the current text selection so that it can later
-   * restore it. This method is mirrored by `resetAfterCommit`.
-   *
-   * Even if you don't want to do anything here, you need to return `null` from it.
-   */
-  prepareForCommit(_containerInfo: Container) {
-    mark("reconciler/prepareForCommit");
-    measureStart("react/commit");
-
-    return null; // noop
-  },
-
-  /**
-   * #### `resetAfterCommit(containerInfo)`
-   *
-   * This method is called right after React has performed the tree mutations. You can use it to restore
-   * something you've stored in `prepareForCommit` — for example, text selection.
-   *
-   * You can leave it empty.
-   */
-  resetAfterCommit(_containerInfo: Container): void {
-    measureEnd("react/commit");
-    mark("reconciler/resetAfterCommit");
-  },
-
-  /**
-   * #### `preparePortalMount(containerInfo)`
-   *
-   * This method is called for a container that's used as a portal target. Usually you can leave it empty.
-   */
-  preparePortalMount(_containerInfo: Container): void {
-    mark("reconciler/preparePortalMount");
-  },
-
-  getInstanceFromNode(node: object): Fiber | null | undefined {
-    mark("reconciler/getInstanceFromNode");
-
-    const instance = nodeToInstanceMap.get(node);
-    if (instance !== undefined) {
-      return instance.unstable_fiber;
-    }
-
-    return null;
-  },
-
-  beforeActiveInstanceBlur(): void {
-    mark("reconciler/beforeActiveInstanceBlur");
-  },
-
-  afterActiveInstanceBlur(): void {
-    mark("reconciler/afterActiveInstanceBlur");
-  },
-
-  prepareScopeUpdate(scopeInstance: object, instance: Instance): void {
-    mark("reconciler/prepareScopeUpdate");
-
-    nodeToInstanceMap.set(scopeInstance, instance);
-  },
-
-  getInstanceFromScope(scopeInstance: object): Instance | null {
-    mark("reconciler/getInstanceFromScope");
-
-    return nodeToInstanceMap.get(scopeInstance) ?? null;
-  },
-
-  detachDeletedInstance(_node: Instance): void {
-    mark("reconciler/detachDeletedInstance");
-  },
-
-  /**
    * #### `createInstance(type, props, rootContainer, hostContext, internalHandle)`
    *
    * This method should return a newly created node. For example, the DOM renderer would call
@@ -337,5 +264,78 @@ export const coreHostConfig = {
       default:
         return null;
     }
+  },
+
+  /**
+   * #### `prepareForCommit(containerInfo)`
+   *
+   * This method lets you store some information before React starts making changes to the tree on
+   * the screen. For example, the DOM renderer stores the current text selection so that it can later
+   * restore it. This method is mirrored by `resetAfterCommit`.
+   *
+   * Even if you don't want to do anything here, you need to return `null` from it.
+   */
+  prepareForCommit(_containerInfo: Container) {
+    mark("reconciler/prepareForCommit");
+    measureStart("react/commit");
+
+    return null; // noop
+  },
+
+  /**
+   * #### `resetAfterCommit(containerInfo)`
+   *
+   * This method is called right after React has performed the tree mutations. You can use it to restore
+   * something you've stored in `prepareForCommit` — for example, text selection.
+   *
+   * You can leave it empty.
+   */
+  resetAfterCommit(_containerInfo: Container): void {
+    measureEnd("react/commit");
+    mark("reconciler/resetAfterCommit");
+  },
+
+  /**
+   * #### `preparePortalMount(containerInfo)`
+   *
+   * This method is called for a container that's used as a portal target. Usually you can leave it empty.
+   */
+  preparePortalMount(_containerInfo: Container): void {
+    mark("reconciler/preparePortalMount");
+  },
+
+  getInstanceFromNode(node: object): Fiber | null | undefined {
+    mark("reconciler/getInstanceFromNode");
+
+    const instance = nodeToInstanceMap.get(node);
+    if (instance !== undefined) {
+      return instance.unstable_fiber;
+    }
+
+    return null;
+  },
+
+  beforeActiveInstanceBlur(): void {
+    mark("reconciler/beforeActiveInstanceBlur");
+  },
+
+  afterActiveInstanceBlur(): void {
+    mark("reconciler/afterActiveInstanceBlur");
+  },
+
+  prepareScopeUpdate(scopeInstance: object, instance: Instance): void {
+    mark("reconciler/prepareScopeUpdate");
+
+    nodeToInstanceMap.set(scopeInstance, instance);
+  },
+
+  getInstanceFromScope(scopeInstance: object): Instance | null {
+    mark("reconciler/getInstanceFromScope");
+
+    return nodeToInstanceMap.get(scopeInstance) ?? null;
+  },
+
+  detachDeletedInstance(_node: Instance): void {
+    mark("reconciler/detachDeletedInstance");
   },
 } satisfies Partial<TestHostConfig>;
