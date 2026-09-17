@@ -71,8 +71,9 @@ export type FragmentInstance = {
 };
 
 /**
- * Host config methods driving fragment refs that are not part of the
- * `@types/react-reconciler` definitions yet.
+ * The `*HostConfigExtras` types below (this one, `SuspenseHostConfigExtras`,
+ * `ViewTransitionHostConfigExtras`) patch in host config methods for React >= 19.3 features that
+ * are not part of the `@types/react-reconciler` definitions yet.
  */
 type FragmentRefHostConfigExtras = {
   createFragmentInstance: (fragmentFiber: Fiber) => FragmentInstance;
@@ -88,9 +89,6 @@ type FragmentRefHostConfigExtras = {
 };
 
 /**
- * Host config methods deciding whether a commit may be suspended for view transitions that are
- * not part of the `@types/react-reconciler` definitions yet.
- *
  * React >= 19.3 calls `suspendOnActiveViewTransition` unconditionally during every commit, so it
  * needs a stub regardless of whether `<ViewTransition>` is used.
  */
@@ -123,10 +121,6 @@ export type ViewTransition = {
 
 export type ViewTransitionInstance = null;
 
-/**
- * Host config methods driving `<ViewTransition>` that are not part of the
- * `@types/react-reconciler` definitions yet.
- */
 type ViewTransitionHostConfigExtras = {
   applyViewTransitionName: (instance: Instance, name: string, className: string) => void;
   restoreViewTransitionName: (instance: Instance, props: Props) => void;
