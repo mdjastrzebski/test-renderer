@@ -1,5 +1,5 @@
 import { mark } from "../performance";
-import type { Props, SuspendedState, TestHostConfig, Type } from "./types";
+import type { Container, Props, SuspendedState, TestHostConfig, Type } from "./types";
 
 /**
  * Host config methods deciding whether a commit needs to be suspended while host components
@@ -14,6 +14,18 @@ export const suspenseHostConfig = {
    */
   maySuspendCommit(type: Type, _props: Props): boolean {
     mark("reconciler/maySuspendCommit", { type });
+
+    return false;
+  },
+
+  maySuspendCommitOnUpdate(type: Type, _prevProps: Props, _nextProps: Props): boolean {
+    mark("reconciler/maySuspendCommitOnUpdate", { type });
+
+    return false;
+  },
+
+  maySuspendCommitInSyncRender(type: Type, _props: Props): boolean {
+    mark("reconciler/maySuspendCommitInSyncRender", { type });
 
     return false;
   },
@@ -64,5 +76,16 @@ export const suspenseHostConfig = {
     mark("reconciler/waitForCommitToBeReady");
 
     return null;
+  },
+
+  /**
+   * #### `suspendOnActiveViewTransition(suspendedState, rootContainer)`
+   *
+   * Called during commit whenever the render is eligible for a `<ViewTransition>`, regardless of
+   * whether one is actually rendered. `<ViewTransition>` itself is not implemented by this
+   * renderer yet, so there is nothing to suspend for.
+   */
+  suspendOnActiveViewTransition(_suspendedState: SuspendedState, _rootContainer: Container) {
+    mark("reconciler/suspendOnActiveViewTransition");
   },
 } satisfies Partial<TestHostConfig>;

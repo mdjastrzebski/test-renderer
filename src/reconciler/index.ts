@@ -1,6 +1,7 @@
 import ReactReconciler from "react-reconciler";
 
 import { coreHostConfig } from "./core";
+import { fragmentRefHostConfig } from "./fragment-refs";
 import { miscHostConfig } from "./misc";
 import { mutationHostConfig } from "./mutation";
 import { schedulingHostConfig } from "./scheduling";
@@ -12,6 +13,7 @@ const hostConfig: TestHostConfig = {
   ...mutationHostConfig,
   ...schedulingHostConfig,
   ...suspenseHostConfig,
+  ...fragmentRefHostConfig,
   ...miscHostConfig,
 };
 

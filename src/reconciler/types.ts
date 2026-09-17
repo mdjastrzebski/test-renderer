@@ -59,6 +59,49 @@ export type HostContext = {
 };
 
 /**
+ * Host representation of a React Fragment ref (React >= 19.3).
+ *
+ * It tracks the host children currently rendered inside the fragment, so that fragment refs
+ * can be observed in tests. The public API of DOM fragment instances (`focus`,
+ * `addEventListener`, `getClientRects`, ...) is intentionally not implemented.
+ */
+export type FragmentInstance = {
+  children: Array<Instance | TextInstance>;
+  unstable_fiber: Fiber;
+};
+
+/**
+ * Host config methods driving fragment refs that are not part of the
+ * `@types/react-reconciler` definitions yet.
+ */
+type FragmentRefHostConfigExtras = {
+  createFragmentInstance: (fragmentFiber: Fiber) => FragmentInstance;
+  updateFragmentInstanceFiber: (fragmentFiber: Fiber, instance: FragmentInstance) => void;
+  commitNewChildToFragmentInstance: (
+    child: Instance | TextInstance,
+    fragmentInstance: FragmentInstance,
+  ) => void;
+  deleteChildFromFragmentInstance: (
+    child: Instance | TextInstance,
+    fragmentInstance: FragmentInstance,
+  ) => void;
+};
+
+/**
+ * Host config methods deciding whether a commit may be suspended for view transitions that are
+ * not part of the `@types/react-reconciler` definitions yet.
+ *
+ * `<ViewTransition>` itself is not implemented by this renderer yet, but React >= 19.3 calls
+ * `suspendOnActiveViewTransition` unconditionally during every commit, so it needs a stub
+ * regardless of whether view transitions are used.
+ */
+type SuspenseHostConfigExtras = {
+  maySuspendCommitOnUpdate: (type: Type, previousProps: Props, nextProps: Props) => boolean;
+  maySuspendCommitInSyncRender: (type: Type, props: Props) => boolean;
+  suspendOnActiveViewTransition: (suspendedState: SuspendedState, rootContainer: Container) => void;
+};
+
+/**
  * Full host config implemented by this renderer.
  *
  * The implementation is split into functional slices (see the sibling modules), each typed as a
@@ -79,4 +122,6 @@ export type TestHostConfig = ReactReconciler.HostConfig<
   TimeoutHandle,
   NoTimeout,
   TransitionStatus
->;
+> &
+  FragmentRefHostConfigExtras &
+  SuspenseHostConfigExtras;
