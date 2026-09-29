@@ -18,6 +18,7 @@ fails typecheck; a method missing across all slices is caught where `index.ts` a
 object to `TestHostConfig`.
 
 - `types.ts` holds every host type, including `TestHostConfig` (the `@types/react-reconciler` config).
+  See [Reconciler Types](./reconciler-types.md) for known gaps and casts.
 - `utils.ts` holds the low-level tree helpers (`appendChildToParent`, `insertBeforeChild`,
   `removeChildFromParent`, `formatInstanceType`) and `nodeToInstanceMap`, the public-node registry
   used by `core.ts`.

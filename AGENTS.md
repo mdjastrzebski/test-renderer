@@ -15,6 +15,7 @@ Project docs:
 
 - [Project Overview](./docs/agents/project-overview.md)
 - [Architecture](./docs/agents/architecture.md)
+- [Reconciler Types](./docs/agents/reconciler-types.md)
 - [Development Conventions](./docs/agents/development-conventions.md)
 - [Commands](./docs/agents/commands.md)
 - [Versioning](./docs/versioning.md)

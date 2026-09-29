@@ -36,6 +36,14 @@ export const coreHostConfig = {
   warnsIfNotActing: true,
 
   // -------------------
+  //  Renderer metadata
+  // -------------------
+  // Only read by `injectIntoDevTools`, which this renderer never calls.
+  rendererPackageName: "test-renderer",
+  rendererVersion: "",
+  extraDevToolsConfig: null,
+
+  // -------------------
   // Hydration Methods
   //    (optional)
   // You can optionally implement hydration to "attach" to the existing tree during the initial render instead

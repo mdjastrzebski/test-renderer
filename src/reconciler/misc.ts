@@ -26,4 +26,17 @@ export const miscHostConfig = {
   requestPostPaintCallback(_callback: (endTime: number) => void) {
     mark("reconciler/requestPostPaintCallback");
   },
+
+  /**
+   * #### `bindToConsole(methodName, args, badgeName)`
+   *
+   * Binds a `console` call so React can invoke it later, e.g. when logging an error replayed from a
+   * Server Component. The environment badge is omitted, as there is no DevTools console to style it.
+   */
+  bindToConsole(methodName: string, args: unknown[], _badgeName: string) {
+    mark("reconciler/bindToConsole", { methodName });
+
+    const method = console[methodName as keyof Console] as (...args: unknown[]) => void;
+    return method.bind(console, ...args);
+  },
 } satisfies Partial<TestHostConfig>;

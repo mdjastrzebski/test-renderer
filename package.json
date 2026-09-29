@@ -50,7 +50,7 @@
     "release": "release-it"
   },
   "dependencies": {
-    "@types/react-reconciler": "~0.33.0",
+    "@types/react-reconciler": "~0.33.1",
     "react-reconciler": "~0.34.0"
   },
   "devDependencies": {

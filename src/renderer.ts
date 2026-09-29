@@ -100,9 +100,7 @@ export function createRoot(options?: RootOptions): Root {
     },
   };
 
-  // @types/react-reconciler types don't fully match react-reconciler's actual Flow types.
-  // The return type is correct at runtime but TypeScript can't verify it statically.
-  // Correctness is verified through tests.
+  // `createContainer` returns an `OpaqueRoot`, which @types/react-reconciler types as `any`.
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   let containerFiber = TestReconciler.createContainer(
     container,
@@ -115,6 +113,7 @@ export function createRoot(options?: RootOptions): Root {
     options?.onCaughtError ?? defaultOnCaughtError,
     options?.onRecoverableError ?? defaultOnRecoverableError,
     defaultOnDefaultTransitionIndicator,
+    null, // transitionCallbacks
   );
 
   measureEnd("createRoot");
