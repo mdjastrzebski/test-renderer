@@ -77,9 +77,8 @@ export type FragmentInstance = {
 };
 
 /**
- * The `*HostConfigExtras` types below (this one and `ViewTransitionHostConfigExtras`) patch in host
- * config methods for React >= 19.3 features that are not part of the `@types/react-reconciler`
- * definitions yet.
+ * The `*HostConfigExtras` types below patch in React >= 19.3 host config methods that
+ * `@types/react-reconciler` does not define yet.
  */
 type FragmentRefHostConfigExtras = {
   createFragmentInstance: (fragmentFiber: Fiber) => FragmentInstance;

@@ -81,8 +81,7 @@ export const suspenseHostConfig = {
   /**
    * #### `getSuspendedCommitReason(state, rootContainer)`
    *
-   * This method is called when a commit is suspended, to record why. It is only called when the
-   * profiler is enabled. Commits are never suspended in a test renderer, so there is no reason to report.
+   * Records why a commit was suspended (profiler only). Commits never suspend here, so there is none.
    */
   getSuspendedCommitReason(_state: SuspendedState, _rootContainer: Container): null {
     mark("reconciler/getSuspendedCommitReason");

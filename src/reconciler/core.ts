@@ -35,9 +35,6 @@ export const coreHostConfig = {
    */
   warnsIfNotActing: true,
 
-  // -------------------
-  //  Renderer metadata
-  // -------------------
   // Only read by `injectIntoDevTools`, which this renderer never calls.
   rendererPackageName: "test-renderer",
   rendererVersion: "",

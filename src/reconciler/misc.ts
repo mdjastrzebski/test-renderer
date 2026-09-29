@@ -30,8 +30,8 @@ export const miscHostConfig = {
   /**
    * #### `bindToConsole(methodName, args, badgeName)`
    *
-   * Binds a `console` call so React can invoke it later, e.g. when logging an error replayed from a
-   * Server Component. The environment badge is omitted, as there is no DevTools console to style it.
+   * Binds a `console` call for React to invoke later, e.g. for errors replayed from Server Components.
+   * The environment badge is dropped: there is no DevTools console to style it.
    */
   bindToConsole(methodName: string, args: unknown[], _badgeName: string) {
     mark("reconciler/bindToConsole", { methodName });
