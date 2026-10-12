@@ -36,7 +36,9 @@ export const miscHostConfig = {
   bindToConsole(methodName: string, args: unknown[], _badgeName: string) {
     mark("reconciler/bindToConsole", { methodName });
 
-    const method = console[methodName as keyof Console] as (...args: unknown[]) => void;
-    return method.bind(console, ...args);
+    return (console[methodName as keyof Console] as (...args: unknown[]) => void).bind(
+      console,
+      ...args,
+    );
   },
 } satisfies Partial<TestHostConfig>;
