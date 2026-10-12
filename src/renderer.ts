@@ -64,7 +64,7 @@ export type ErrorHandler = (error: unknown, errorInfo: ErrorInfo) => void;
 
 /** Error information provided to error handlers. */
 export type ErrorInfo = {
-  componentStack?: string;
+  componentStack?: string | null;
 };
 
 /**

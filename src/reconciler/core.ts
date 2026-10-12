@@ -154,7 +154,7 @@ export const coreHostConfig = {
   },
 
   /**
-   * #### `finalizeInitialChildren(instance, type, props, rootContainer, hostContext)`
+   * #### `finalizeInitialChildren(instance, type, props, hostContext)`
    *
    * In this method, you can perform some final mutations on the `instance`. Unlike with `createInstance`,
    * by the time `finalizeInitialChildren` is called, all the initial children have already been added to
@@ -173,7 +173,6 @@ export const coreHostConfig = {
     instance: Instance,
     _type: Type,
     _props: Props,
-    _rootContainer: Container,
     _hostContext: HostContext,
   ): boolean {
     mark("reconciler/finalizeInitialChildren", { type: instance.type });
@@ -208,10 +207,9 @@ export const coreHostConfig = {
    * This method lets you return the initial host context from the root of the tree. See `getChildHostContext`
    * for the explanation of host context.
    *
-   * If you don't intend to use host context, you can return `null`.
    * This method happens **in the render phase**. Do not mutate the tree from it.
    */
-  getRootHostContext(rootContainer: Container): HostContext | null {
+  getRootHostContext(rootContainer: Container): HostContext {
     mark("reconciler/getRootHostContext");
 
     return {

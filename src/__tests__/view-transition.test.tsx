@@ -1,7 +1,9 @@
-import { beforeEach, expect } from "@jest/globals";
+import { beforeEach, expect, jest, test } from "@jest/globals";
 import * as React from "react";
 
+import { Tag } from "../constants";
 import { TestReconciler } from "../reconciler";
+import { viewTransitionHostConfig } from "../reconciler/view-transitions";
 import { createRoot } from "../renderer";
 import { testGateReact19_3 } from "../test-utils/react-version";
 import { act, renderWithAct } from "../test-utils/render";
@@ -223,3 +225,28 @@ testGateReact19_3(
     expect(events).toEqual([]);
   },
 );
+
+test("startViewTransition finishes without the profiling-only callbacks", async () => {
+  const flushPassiveEffects = jest.fn(() => false);
+  const reportError = jest.fn();
+
+  // Non-profiling builds pass `null` for `blockedCallback` and `finishedAnimation`.
+  const transition = viewTransitionHostConfig.startViewTransition(
+    null,
+    { tag: Tag.Container, parent: null, children: [], isHidden: false, config: {} },
+    null,
+    () => {},
+    () => {},
+    () => {},
+    () => {},
+    flushPassiveEffects,
+    reportError,
+    null,
+    null,
+  );
+
+  await transition.finished;
+
+  expect(flushPassiveEffects).toHaveBeenCalledTimes(1);
+  expect(reportError).not.toHaveBeenCalled();
+});

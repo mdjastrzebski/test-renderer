@@ -5,9 +5,9 @@ import type {
   Instance,
   InstanceMeasurement,
   Props,
+  RunningViewTransition,
   SuspendedState,
   TestHostConfig,
-  ViewTransition,
 } from "./types";
 import { deepEqual } from "./utils";
 
@@ -25,7 +25,11 @@ import { deepEqual } from "./utils";
  * would for a real animation that finishes instantly.
  */
 export const viewTransitionHostConfig = {
-  applyViewTransitionName(_instance: Instance, _name: string, _className: string) {
+  applyViewTransitionName(
+    _instance: Instance,
+    _name: string,
+    _className: string | null | undefined,
+  ) {
     mark("reconciler/applyViewTransitionName");
   },
 
@@ -101,7 +105,8 @@ export const viewTransitionHostConfig = {
    * `onUpdate`. `flushPassiveEffects` must also be called explicitly here: unlike a synchronous,
    * inline completion, deferring to a microtask means React's own follow-up scheduling no longer
    * flushes passive effects on its own. `_onSuspend` is unused: nothing here ever needs to load or
-   * decode, so this renderer never has a reason to suspend a transition.
+   * decode, so this renderer never has a reason to suspend a transition. React passes `_onSuspend`
+   * and `onFinish` only in profiling builds, and `null` otherwise.
    */
   startViewTransition(
     _suspendedState: SuspendedState,
@@ -111,18 +116,18 @@ export const viewTransitionHostConfig = {
     flushLayoutEffects: () => void,
     flushAfterMutationEffects: () => void,
     flushSpawnedWork: () => void,
-    flushPassiveEffects: () => boolean,
+    flushPassiveEffects: () => unknown,
     reportError: (error: unknown) => void,
-    _onSuspend: (reason: string) => void,
-    onFinish: () => void,
-  ): ViewTransition {
+    _onSuspend: ((reason: string) => void) | null,
+    onFinish: (() => void) | null,
+  ): RunningViewTransition {
     mark("reconciler/startViewTransition");
 
     let resolveFinished!: () => void;
     const finished = new Promise<void>((resolve) => {
       resolveFinished = resolve;
     });
-    const transition: ViewTransition = { finished, resolveFinished, stopped: false };
+    const transition: RunningViewTransition = { finished, resolveFinished, stopped: false };
 
     void Promise.resolve().then(() => {
       if (transition.stopped) {
@@ -138,7 +143,7 @@ export const viewTransitionHostConfig = {
       } catch (error) {
         reportError(error);
       } finally {
-        onFinish();
+        onFinish?.();
         resolveFinished();
       }
     });
@@ -152,19 +157,22 @@ export const viewTransitionHostConfig = {
    * flushing again. `finished` still resolves so a listener registered via
    * `addViewTransitionFinishedListener` does not hang.
    */
-  stopViewTransition(viewTransition: ViewTransition) {
+  stopViewTransition(viewTransition: RunningViewTransition) {
     mark("reconciler/stopViewTransition");
 
     viewTransition.stopped = true;
     viewTransition.resolveFinished();
   },
 
-  addViewTransitionFinishedListener(viewTransition: ViewTransition, listener: () => void) {
+  addViewTransitionFinishedListener(viewTransition: RunningViewTransition, listener: () => void) {
     mark("reconciler/addViewTransitionFinishedListener");
 
     void viewTransition.finished.then(listener);
   },
 
+  /**
+   * There is nothing to hand back in a test renderer, so the instance is represented by `null`.
+   */
   createViewTransitionInstance(_name: string) {
     mark("reconciler/createViewTransitionInstance");
 
