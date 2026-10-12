@@ -44,6 +44,7 @@ export type TextInstance = {
   isHidden: boolean;
 };
 
+export type ActivityInstance = object;
 export type SuspenseInstance = object;
 export type SuspendedState = unknown;
 export type HydratableInstance = object;
@@ -52,6 +53,10 @@ export type ChildSet = unknown;
 export type TimeoutHandle = unknown;
 export type NoTimeout = unknown;
 export type TransitionStatus = unknown;
+export type RendererInspectionConfig = null;
+export type FormStateMarkerInstance = object;
+export type HoistableRoot = object;
+export type Resource = object;
 
 export type HostContext = {
   type: string;
@@ -72,9 +77,8 @@ export type FragmentInstance = {
 };
 
 /**
- * The `*HostConfigExtras` types below (this one, `SuspenseHostConfigExtras`,
- * `ViewTransitionHostConfigExtras`) patch in host config methods for React >= 19.3 features that
- * are not part of the `@types/react-reconciler` definitions yet.
+ * The `*HostConfigExtras` types below patch in React >= 19.3 host config methods that
+ * `@types/react-reconciler` does not define yet.
  */
 type FragmentRefHostConfigExtras = {
   createFragmentInstance: (fragmentFiber: Fiber) => FragmentInstance;
@@ -87,16 +91,6 @@ type FragmentRefHostConfigExtras = {
     child: Instance | TextInstance,
     fragmentInstance: FragmentInstance,
   ) => void;
-};
-
-/**
- * React >= 19.3 calls `suspendOnActiveViewTransition` unconditionally during every commit, so it
- * needs a stub regardless of whether `<ViewTransition>` is used.
- */
-type SuspenseHostConfigExtras = {
-  maySuspendCommitOnUpdate: (type: Type, previousProps: Props, nextProps: Props) => boolean;
-  maySuspendCommitInSyncRender: (type: Type, props: Props) => boolean;
-  suspendOnActiveViewTransition: (suspendedState: SuspendedState, rootContainer: Container) => void;
 };
 
 /**
@@ -175,6 +169,7 @@ export type TestHostConfig = ReactReconciler.HostConfig<
   Container,
   Instance,
   TextInstance,
+  ActivityInstance,
   SuspenseInstance,
   HydratableInstance,
   FormInstance,
@@ -183,8 +178,12 @@ export type TestHostConfig = ReactReconciler.HostConfig<
   ChildSet,
   TimeoutHandle,
   NoTimeout,
-  TransitionStatus
+  TransitionStatus,
+  SuspendedState,
+  RendererInspectionConfig,
+  FormStateMarkerInstance,
+  HoistableRoot,
+  Resource
 > &
-  SuspenseHostConfigExtras &
   FragmentRefHostConfigExtras &
   ViewTransitionHostConfigExtras;

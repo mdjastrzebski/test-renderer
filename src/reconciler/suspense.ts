@@ -1,5 +1,5 @@
 import { mark } from "../performance";
-import type { Container, Props, SuspendedState, TestHostConfig, Type } from "./types";
+import type { Container, Instance, Props, SuspendedState, TestHostConfig, Type } from "./types";
 
 /**
  * Host config methods deciding whether a commit needs to be suspended while host components
@@ -31,12 +31,12 @@ export const suspenseHostConfig = {
   },
 
   /**
-   * #### `preloadInstance(type, props)`
+   * #### `preloadInstance(instance, type, props)`
    *
    * This method may be called during render if the Host Component type and props might suspend a commit.
    * It can be used to initiate any work that might shorten the duration of a suspended commit.
    */
-  preloadInstance(type: Type, _props: Props): boolean {
+  preloadInstance(_instance: Instance, type: Type, _props: Props): boolean {
     mark("reconciler/preloadInstance", { type });
 
     return true;
@@ -53,12 +53,12 @@ export const suspenseHostConfig = {
   },
 
   /**
-   * #### `suspendInstance(type, props)`
+   * #### `suspendInstance(state, instance, type, props)`
    *
    * This method is called after `startSuspendingCommit` for each Host Component that indicated it might
    * suspend a commit.
    */
-  suspendInstance(type: Type, _props: Props) {
+  suspendInstance(_state: SuspendedState, _instance: Instance, type: Type, _props: Props) {
     mark("reconciler/suspendInstance", { type });
   },
 
@@ -72,8 +72,19 @@ export const suspenseHostConfig = {
    * callback will initiate the commit when called. The return value is a cancellation function that the
    * Reconciler can use to abort the commit.
    */
-  waitForCommitToBeReady(_state?: SuspendedState, _timeoutOffset?: number) {
+  waitForCommitToBeReady(_state: SuspendedState, _timeoutOffset: number) {
     mark("reconciler/waitForCommitToBeReady");
+
+    return null;
+  },
+
+  /**
+   * #### `getSuspendedCommitReason(state, rootContainer)`
+   *
+   * Records why a commit was suspended (profiler only). Commits never suspend here, so there is none.
+   */
+  getSuspendedCommitReason(_state: SuspendedState, _rootContainer: Container): null {
+    mark("reconciler/getSuspendedCommitReason");
 
     return null;
   },

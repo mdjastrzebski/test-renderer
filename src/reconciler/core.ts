@@ -35,6 +35,11 @@ export const coreHostConfig = {
    */
   warnsIfNotActing: true,
 
+  // Only read by `injectIntoDevTools`, which this renderer never calls.
+  rendererPackageName: "test-renderer",
+  rendererVersion: "",
+  extraDevToolsConfig: null,
+
   // -------------------
   // Hydration Methods
   //    (optional)
