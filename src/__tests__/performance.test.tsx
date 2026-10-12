@@ -1,3 +1,4 @@
+import type { PerformanceMark, PerformanceMeasure } from "node:perf_hooks";
 import { afterEach, beforeEach, describe, expect, test } from "@jest/globals";
 import * as React from "react";
 

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "@jest/globals";
-import { createElement, createRef, type Ref } from "react";
+import { createElement, createRef } from "react";
 
 import { createRoot } from "../renderer";
 import type { TestInstance } from "../test-instance";
@@ -24,7 +24,7 @@ test("basic renderer usage", async () => {
 test("refs receive TestInstance by default", async () => {
   const renderer = createRoot();
   const ref = createRef<TestInstance | null>();
-  await renderWithAct(renderer, <div ref={ref as Ref<HTMLDivElement>}>Hello</div>);
+  await renderWithAct(renderer, <div ref={ref}>Hello</div>);
   const rootInstance = getRootInstance(renderer);
   expect(ref.current).toBe(rootInstance);
 });

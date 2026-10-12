@@ -1,3 +1,4 @@
+import type { PerformanceEntry } from "node:perf_hooks";
 import type { ReactElement } from "react";
 import { act as reactAct } from "react";
 
