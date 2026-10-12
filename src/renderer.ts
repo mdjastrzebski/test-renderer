@@ -1,5 +1,5 @@
 import { isValidElement, type ReactElement } from "react";
-import { ConcurrentRoot } from "react-reconciler/constants";
+import { ConcurrentRoot } from "react-reconciler/constants.js";
 
 import { Tag } from "./constants";
 import { measureEnd, measureStart } from "./performance";
