@@ -46,8 +46,8 @@
     "test:watch": "jest --watch",
     "validate": "bun run typecheck && bun run test && bun run lint && bun run format:check",
     "validate:fix": "bun run format && bun run lint --fix && bun run typecheck && bun run test -u",
-    "format": "oxfmt .",
-    "format:check": "oxfmt --check .",
+    "format": "oxfmt --disable-nested-config .",
+    "format:check": "oxfmt --disable-nested-config --check .",
     "release": "release-it"
   },
   "dependencies": {
@@ -64,7 +64,7 @@
     "eslint": "^10.12.0",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "jest": "^30.5.2",
-    "oxfmt": "^0.44.0",
+    "oxfmt": "^0.72.0",
     "react": "^19.3.0",
     "release-it": "^19.2.4",
     "ts-jest": "^29.4.14",
