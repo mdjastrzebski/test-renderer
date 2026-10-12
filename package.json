@@ -62,7 +62,7 @@
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "eslint": "^10.12.0",
-    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
     "jest": "^30.5.2",
     "oxfmt": "^0.72.0",
     "react": "^19.3.0",
