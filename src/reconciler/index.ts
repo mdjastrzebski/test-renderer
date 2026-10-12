@@ -22,22 +22,9 @@ const hostConfig: TestHostConfig = {
 export const TestReconciler = ReactReconciler(hostConfig);
 
 export type {
-  ChildSet,
   Container,
-  FormInstance,
-  HostContext,
-  HydratableInstance,
   Instance,
-  NoTimeout,
   Props,
-  PublicInstance,
-  ReconcilerConfig,
-  SuspendedState,
-  SuspenseInstance,
-  TestHostConfig,
   TextInstance,
-  TimeoutHandle,
   TransformHiddenInstanceProps,
-  TransitionStatus,
-  Type,
 } from "./types";

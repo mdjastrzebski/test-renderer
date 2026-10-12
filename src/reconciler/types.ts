@@ -102,8 +102,8 @@ export type RunningViewTransition = {
 /**
  * Full host config implemented by this renderer.
  *
- * The implementation is split into functional slices (see the sibling modules), each typed as a
- * `Pick<TestHostConfig, ...>` and composed in `./index.ts`.
+ * The implementation is split into functional slices (see the sibling modules), each checked with
+ * `satisfies Partial<TestHostConfig>` and composed in `./index.ts`.
  */
 export type TestHostConfig = ReactReconciler.HostConfig<
   Type,

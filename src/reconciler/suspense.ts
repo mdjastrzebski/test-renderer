@@ -93,8 +93,8 @@ export const suspenseHostConfig = {
    * #### `suspendOnActiveViewTransition(suspendedState, rootContainer)`
    *
    * Called during commit whenever the render is eligible for a `<ViewTransition>`, regardless of
-   * whether one is actually rendered. `<ViewTransition>` itself is not implemented by this
-   * renderer yet, so there is nothing to suspend for.
+   * whether one is actually rendered. Nothing loads in a test renderer, so there is nothing to
+   * suspend for.
    */
   suspendOnActiveViewTransition(_suspendedState: SuspendedState, _rootContainer: Container) {
     mark("reconciler/suspendOnActiveViewTransition");
