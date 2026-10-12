@@ -106,7 +106,7 @@ export const viewTransitionHostConfig = {
    * inline completion, deferring to a microtask means React's own follow-up scheduling no longer
    * flushes passive effects on its own. `_onSuspend` is unused: nothing here ever needs to load or
    * decode, so this renderer never has a reason to suspend a transition. React passes `_onSuspend`
-   * and `onFinish` only in profiling builds, and `null` otherwise.
+   * and `onFinish` in development and profiling builds, and `null` in production.
    */
   startViewTransition(
     _suspendedState: SuspendedState,

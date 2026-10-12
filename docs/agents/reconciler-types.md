@@ -8,6 +8,11 @@
   We pass `null`.
 - `rendererPackageName`, `rendererVersion` and `extraDevToolsConfig` are required by the types but only
   read by `injectIntoDevTools`, which we never call. They are stubs.
+- `getInstanceFromNode`, `beforeActiveInstanceBlur`, `afterActiveInstanceBlur`, `prepareScopeUpdate` and
+  `getInstanceFromScope` (`core.ts`), and `requestPostPaintCallback` (`misc.ts`), are required by the
+  types but dead at runtime. The 0.34 runtime reads them and never calls them, except
+  `getInstanceFromNode`, which only the test selector API calls, and we don't set `supportsTestSelectors`.
+  They are stubs. Delete them once the types mark them optional upstream.
 
 ## Deliberate casts
 

@@ -226,11 +226,11 @@ testGateReact19_3(
   },
 );
 
-test("startViewTransition finishes without the profiling-only callbacks", async () => {
+test("startViewTransition finishes without the callbacks production builds omit", async () => {
   const flushPassiveEffects = jest.fn(() => false);
   const reportError = jest.fn();
 
-  // Non-profiling builds pass `null` for `blockedCallback` and `finishedAnimation`.
+  // Production builds pass `null` for `blockedCallback` and `finishedAnimation`.
   const transition = viewTransitionHostConfig.startViewTransition(
     null,
     { tag: Tag.Container, parent: null, children: [], isHidden: false, config: {} },
