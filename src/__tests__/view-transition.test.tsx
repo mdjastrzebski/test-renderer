@@ -250,3 +250,34 @@ test("startViewTransition finishes without the callbacks production builds omit"
   expect(flushPassiveEffects).toHaveBeenCalledTimes(1);
   expect(reportError).not.toHaveBeenCalled();
 });
+
+test("stopViewTransition skips the deferred flushes and still resolves finished", async () => {
+  const flushes = jest.fn();
+  const reportError = jest.fn();
+  const listener = jest.fn();
+
+  const transition = viewTransitionHostConfig.startViewTransition(
+    null,
+    { tag: Tag.Container, parent: null, children: [], isHidden: false, config: {} },
+    null,
+    flushes,
+    flushes,
+    flushes,
+    flushes,
+    flushes,
+    reportError,
+    null,
+    null,
+  );
+  viewTransitionHostConfig.addViewTransitionFinishedListener(transition, listener);
+
+  // React stops a transition synchronously, before the microtask that would complete it, and
+  // flushes the commit itself.
+  viewTransitionHostConfig.stopViewTransition(transition);
+  await transition.finished;
+  await Promise.resolve();
+
+  expect(flushes).not.toHaveBeenCalled();
+  expect(reportError).not.toHaveBeenCalled();
+  expect(listener).toHaveBeenCalledTimes(1);
+});
