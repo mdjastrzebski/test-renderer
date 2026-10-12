@@ -1,4 +1,4 @@
-import { DefaultEventPriority, NoEventPriority } from "react-reconciler/constants";
+import { DefaultEventPriority, NoEventPriority } from "react-reconciler/constants.js";
 
 import { mark } from "../performance";
 import type { TestHostConfig } from "./types";

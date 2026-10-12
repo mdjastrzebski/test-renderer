@@ -36,6 +36,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "check:dist": "node scripts/check-dist.mjs",
     "check:react-release-guard": "node scripts/check-react-release-guard.mjs",
     "dev": "tsdown --watch",
     "test": "jest",
