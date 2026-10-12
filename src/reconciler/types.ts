@@ -77,23 +77,6 @@ export type FragmentInstance = {
 };
 
 /**
- * The `*HostConfigExtras` types below patch in React >= 19.3 host config methods that
- * `@types/react-reconciler` does not define yet.
- */
-type FragmentRefHostConfigExtras = {
-  createFragmentInstance: (fragmentFiber: Fiber) => FragmentInstance;
-  updateFragmentInstanceFiber: (fragmentFiber: Fiber, instance: FragmentInstance) => void;
-  commitNewChildToFragmentInstance: (
-    child: Instance | TextInstance,
-    fragmentInstance: FragmentInstance,
-  ) => void;
-  deleteChildFromFragmentInstance: (
-    child: Instance | TextInstance,
-    fragmentInstance: FragmentInstance,
-  ) => void;
-};
-
-/**
  * There is no real geometry to measure in a test renderer, so an instance measurement is a
  * snapshot of its rendered content instead (the same shape `instanceToJson` produces). Comparing
  * two snapshots is how `hasInstanceChanged` tells an instance that actually changed apart from
@@ -110,58 +93,17 @@ export type InstanceMeasurement = JsonElement | null;
  * React when a later sync commit interrupts this transition) skip a flush React has already
  * performed itself, without leaving `finished` unresolved.
  */
-export type ViewTransition = {
+export type RunningViewTransition = {
   finished: Promise<void>;
   resolveFinished: () => void;
   stopped: boolean;
 };
 
 /**
- * There is nothing to hand back from `createViewTransitionInstance` in a test renderer, so it is
- * represented by `null`.
- */
-export type ViewTransitionInstance = null;
-
-type ViewTransitionHostConfigExtras = {
-  applyViewTransitionName: (instance: Instance, name: string, className: string) => void;
-  restoreViewTransitionName: (instance: Instance, props: Props) => void;
-  cancelViewTransitionName: (instance: Instance, name: string, props: Props) => void;
-  cancelRootViewTransitionName: (rootContainer: Container) => void;
-  restoreRootViewTransitionName: (rootContainer: Container) => void;
-  measureInstance: (instance: Instance) => InstanceMeasurement;
-  measureClonedInstance: (instance: Instance) => InstanceMeasurement;
-  wasInstanceInViewport: (measurement: InstanceMeasurement) => boolean;
-  hasInstanceChanged: (
-    previousMeasurement: InstanceMeasurement,
-    nextMeasurement: InstanceMeasurement,
-  ) => boolean;
-  hasInstanceAffectedParent: (
-    previousMeasurement: InstanceMeasurement,
-    nextMeasurement: InstanceMeasurement,
-  ) => boolean;
-  startViewTransition: (
-    suspendedState: SuspendedState,
-    rootContainer: Container,
-    transitionTypes: null | string[],
-    flushMutationEffects: () => void,
-    flushLayoutEffects: () => void,
-    flushAfterMutationEffects: () => void,
-    flushSpawnedWork: () => void,
-    flushPassiveEffects: () => boolean,
-    reportError: (error: unknown) => void,
-    onSuspend: (reason: string) => void,
-    onFinish: () => void,
-  ) => ViewTransition;
-  stopViewTransition: (viewTransition: ViewTransition) => void;
-  addViewTransitionFinishedListener: (viewTransition: ViewTransition, listener: () => void) => void;
-  createViewTransitionInstance: (name: string) => ViewTransitionInstance;
-};
-
-/**
  * Full host config implemented by this renderer.
  *
- * The implementation is split into functional slices (see the sibling modules), each typed as a
- * `Pick<TestHostConfig, ...>` and composed in `./index.ts`.
+ * The implementation is split into functional slices (see the sibling modules), each checked with
+ * `satisfies Partial<TestHostConfig>` and composed in `./index.ts`.
  */
 export type TestHostConfig = ReactReconciler.HostConfig<
   Type,
@@ -183,7 +125,8 @@ export type TestHostConfig = ReactReconciler.HostConfig<
   RendererInspectionConfig,
   FormStateMarkerInstance,
   HoistableRoot,
-  Resource
-> &
-  FragmentRefHostConfigExtras &
-  ViewTransitionHostConfigExtras;
+  Resource,
+  InstanceMeasurement,
+  RunningViewTransition,
+  FragmentInstance
+>;

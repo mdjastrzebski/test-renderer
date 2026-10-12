@@ -12,12 +12,12 @@ export const miscHostConfig = {
   NotPendingTransition: null,
   HostTransitionContext: {
     $$typeof: REACT_CONTEXT_TYPE,
-    Provider: null as unknown as ReactReconciler.ReactProviderType<TransitionStatus>,
-    Consumer: null as unknown as ReactReconciler.ReactContext<TransitionStatus>,
+    Provider: null as unknown as ReactReconciler.ReactContext<TransitionStatus>,
+    Consumer: null as unknown as ReactReconciler.ReactConsumerType<TransitionStatus>,
     _currentValue: null,
     _currentValue2: null,
     _threadCount: 0,
-  } as ReactReconciler.ReactContext<TransitionStatus>,
+  } satisfies ReactReconciler.ReactContext<TransitionStatus>,
 
   resetFormInstance(_form: Instance) {
     mark("reconciler/resetFormInstance");

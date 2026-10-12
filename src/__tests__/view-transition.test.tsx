@@ -1,7 +1,9 @@
-import { beforeEach, expect } from "@jest/globals";
+import { beforeEach, expect, jest, test } from "@jest/globals";
 import * as React from "react";
 
+import { Tag } from "../constants";
 import { TestReconciler } from "../reconciler";
+import { viewTransitionHostConfig } from "../reconciler/view-transitions";
 import { createRoot } from "../renderer";
 import { testGateReact19_3 } from "../test-utils/react-version";
 import { act, renderWithAct } from "../test-utils/render";
@@ -223,3 +225,59 @@ testGateReact19_3(
     expect(events).toEqual([]);
   },
 );
+
+test("startViewTransition finishes without the callbacks production builds omit", async () => {
+  const flushPassiveEffects = jest.fn(() => false);
+  const reportError = jest.fn();
+
+  // Production builds pass `null` for `blockedCallback` and `finishedAnimation`.
+  const transition = viewTransitionHostConfig.startViewTransition(
+    null,
+    { tag: Tag.Container, parent: null, children: [], isHidden: false, config: {} },
+    null,
+    () => {},
+    () => {},
+    () => {},
+    () => {},
+    flushPassiveEffects,
+    reportError,
+    null,
+    null,
+  );
+
+  await transition.finished;
+
+  expect(flushPassiveEffects).toHaveBeenCalledTimes(1);
+  expect(reportError).not.toHaveBeenCalled();
+});
+
+test("stopViewTransition skips the deferred flushes and still resolves finished", async () => {
+  const flushes = jest.fn();
+  const reportError = jest.fn();
+  const listener = jest.fn();
+
+  const transition = viewTransitionHostConfig.startViewTransition(
+    null,
+    { tag: Tag.Container, parent: null, children: [], isHidden: false, config: {} },
+    null,
+    flushes,
+    flushes,
+    flushes,
+    flushes,
+    flushes,
+    reportError,
+    null,
+    null,
+  );
+  viewTransitionHostConfig.addViewTransitionFinishedListener(transition, listener);
+
+  // React stops a transition synchronously, before the microtask that would complete it, and
+  // flushes the commit itself.
+  viewTransitionHostConfig.stopViewTransition(transition);
+  await transition.finished;
+  await Promise.resolve();
+
+  expect(flushes).not.toHaveBeenCalled();
+  expect(reportError).not.toHaveBeenCalled();
+  expect(listener).toHaveBeenCalledTimes(1);
+});
