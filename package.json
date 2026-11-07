@@ -75,6 +75,9 @@
   "peerDependencies": {
     "react": "^19.0.0"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "testRenderer": {
     "supportedReactRange": ">=19.0.0 <19.4.0"
   }
