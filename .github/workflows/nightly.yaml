@@ -53,10 +53,10 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Install React canary
-        run: bun add -d react@next
+        run: bun add -d react@canary
 
       - name: Install react-reconciler canary
-        run: bun add react-reconciler@next
+        run: bun add react-reconciler@canary
 
       - name: Build with canary dependencies
         run: bun run build
