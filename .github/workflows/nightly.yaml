@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        react-version: ["~19.0.0", "~19.1.0", "~19.2.0", "~19.3.0", "latest"]
+        react-version: ["~19.0.0", "~19.1.0", "~19.2.0", "~19.3.1", "latest"]
     steps:
       - uses: actions/checkout@v5
 
@@ -43,6 +43,11 @@ jobs:
       - name: Run tests
         run: bun run test:ci
 
+  # Uses `@canary`, not `@next`: React's npm `next` tag is stale (stuck on a May 2026
+  # 19.3.0 canary, older than stable 19.3.x), while `canary` tracks React's main
+  # branch. `react` and `react-reconciler` must come from the same canary,
+  # because a prerelease `react` doesn't satisfy the stable reconciler's peer range and
+  # bun would install a second React copy.
   test-canary-react:
     name: Test React canary
     runs-on: ubuntu-latest
@@ -53,10 +58,10 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Install React canary
-        run: bun add -d react@next
+        run: bun add -d react@canary
 
       - name: Install react-reconciler canary
-        run: bun add react-reconciler@next
+        run: bun add react-reconciler@canary
 
       - name: Build with canary dependencies
         run: bun run build

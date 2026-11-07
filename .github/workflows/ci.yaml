@@ -47,7 +47,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        react-version: ["~19.0.0", "~19.1.0", "~19.2.0", "~19.3.0", "latest", "next"]
+        # No "next": React's npm `next` tag is stale (stuck on a May 2026 19.3.0 canary,
+        # older than stable 19.3.x), and a prerelease `react` doesn't satisfy the stable
+        # react-reconciler peer range, so bun installs a second React copy and every
+        # hook call fails. Prerelease React is tested in nightly.yaml on `@canary`.
+        react-version: ["~19.0.0", "~19.1.0", "~19.2.0", "~19.3.1", "latest"]
     steps:
       - uses: actions/checkout@v5
 
