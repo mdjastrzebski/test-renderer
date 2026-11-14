@@ -27,7 +27,7 @@ A wrapper around rendered host elements with a DOM-like API for querying and ins
 - `props: Record<string, any>`: The element's props object.
 - `children: TestNode[]`: Array of child nodes (elements and text strings). Hidden children are excluded by default, but are included when `transformHiddenInstanceProps` is configured.
 - `parent: TestInstance | null`: The parent element, or `null` if this is the root container.
-- `unstable_fiber: Fiber | null`: Access to the underlying React Fiber node. **Warning:** This is an unstable API that exposes internal React Reconciler structures which may change without warning in future React versions. Use with caution and only when absolutely necessary.
+- `unstable_fiber: Fiber | null`: Access to the underlying React Fiber node. **Warning:** This is an unstable API that exposes internal React Reconciler structures which may change without warning in future React versions. Use with caution and only when absolutely necessary. The returned fiber may be either the current fiber or its `alternate`, and its `.return` chain may lead to outdated ancestor copies after React bails out of a subtree. Reading ancestors' `memoizedProps` this way can return props from an earlier render, so resolve the current copy at each step if you need up-to-date props.
 
 **Methods:**
 

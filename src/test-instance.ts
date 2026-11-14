@@ -61,6 +61,11 @@ export class TestInstance {
    * internal react-reconciler structures which may change without warning in future
    * React versions. Use with caution and only when absolutely necessary.
    *
+   * The returned fiber may be either the current fiber or its `alternate`. When React
+   * bails out of a subtree, `.return` pointers inside it may also lead to outdated
+   * ancestor copies, so ancestors' `memoizedProps` read this way can be stale. Resolve
+   * the current copy at each step if you need up-to-date props.
+   *
    * @returns The Fiber node for this instance, or null if this is a container.
    */
   get unstable_fiber(): Fiber | null {
